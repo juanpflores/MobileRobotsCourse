@@ -1,0 +1,41 @@
+<launch>
+  <arg name="simul" default="true"/>
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>	
+  
+  <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+
+  <include file="$(find surge_et_ambula)/launch/hardware.launch">
+    <arg name="simul" value="$(arg simul)"/>
+    <arg name="simul_pcl" value="$(arg simul)"/>
+  </include>
+
+  <group ns="hri">
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_getting_started.rviz"/>
+  </group>
+
+  <group ns="navigation">
+    <group ns="localization">
+      <node name="map_server" pkg="map_server" type="map_server" output="screen"
+	    args="$(find knowledge)/navigation/occupancy_grids/Universum.yaml"/>
+      <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+	<!-- This params are for relocate the justina localization more fast --> 
+	<param name="odom_alpha1" value="0.6"/>
+	<param name="odom_alpha2" value="0.6"/>
+	<param name="odom_alpha3" value="0.6"/>
+	<param name="odom_alpha4" value="0.6"/>
+	<param name="odom_alpha5" value="0.6"/>
+	<param name="recovery_alpha_slow" value="0.001"/>
+	<param name="recovery_alpha_fast" value="0.1"/>
+	<param name="initial_pose_x" value="$(arg initial_pose_x)"/>
+	<param name="initial_pose_y" value="$(arg initial_pose_y)"/>
+	<param name="initial_pose_a" value="$(arg initial_pose_a)"/>
+	<param name="update_min_a" value="0.3"/>
+	<param name="laser_min_range" value="0.3"/>
+	<param name="odom_model_type" value="omni"/>
+      </node>
+    </group>
+  </group>
+</launch>
