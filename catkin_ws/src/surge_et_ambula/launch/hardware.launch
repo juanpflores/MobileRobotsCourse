@@ -47,9 +47,6 @@
       <!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
       <param name="dynamic_map" value="$(arg dynamic_map)"/>
     </node>
-    <!-- Nodes to the simulation justina robot -->
-    <node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"
-	  args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
     <!-- Nodes to common modes -->
     <node name="joy" pkg="joy" type="joy_node" output="screen"/>
   </group>

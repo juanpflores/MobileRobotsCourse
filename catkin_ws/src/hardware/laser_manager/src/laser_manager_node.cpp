@@ -136,6 +136,7 @@ int main(int argc, char** argv)
     }
 
     //tf::Quaternion zrot(0,0,1,0);
+    int first_failures = 100;
     while(ros::ok())
     {
         if(simulated)
@@ -156,7 +157,14 @@ int main(int argc, char** argv)
                 sensorPose.orientation.z = q.z();
                 sensorPose.orientation.w = q.w();
             }
-            catch(...){std::cout << "LaserSimulator.-> Cannot get transform from base_link to map" << std::endl;}
+            catch(...)
+	    {
+		if(--first_failures < 0)
+		{
+		    std::cout << "LaserSimulator.-> Cannot get transform from base_link to map" << std::endl;
+		    first_failures = 0;
+		}
+	    }
 
             simulatedScan = *occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
             simulatedScan.header.stamp = ros::Time::now();
