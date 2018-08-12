@@ -58,14 +58,6 @@ def callback_stop(msg):
     speed_rear  = 0;
     new_data = True;
 
-def callback_speeds(msg):
-    global speed_left, speed_right, speed_front, speed_rear, new_data;
-    speed_left  = msg.data[0];
-    speed_right = msg.data[1];
-    speed_front = (speed_right - speed_left)/2.0;
-    speed_rear  = (speed_left - speed_right)/2.0;
-    new_data = True;
-
 def callback_cmd_vel(msg):
     global speed_left, speed_right, speed_front, speed_rear, new_data;
     speed_left  = msg.linear.x - msg.angular.z * base_diameter/2.0
@@ -132,7 +124,6 @@ def main():
     #ROS CONNECTION
     pubBattery = rospy.Publisher("mobile_base/base_battery", Float32, queue_size = 1);
     subStop    = rospy.Subscriber("robot_state/stop", Empty, callback_stop, queue_size=1);
-    subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, callback_speeds, queue_size=1);
     subCmdVel  = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callback_cmd_vel, queue_size=1);
     subSimul   = rospy.Subscriber("/simulated", Bool, callback_simulated, queue_size = 1);
     br   = tf.TransformBroadcaster()

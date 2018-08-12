@@ -14,6 +14,7 @@
 
   <group ns="hri">
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_getting_started.rviz"/>
+    <node name="simple_gui" pkg="simple_gui" type="simple_gui_node" output="screen"/>
   </group>
 
   <group ns="navigation">
