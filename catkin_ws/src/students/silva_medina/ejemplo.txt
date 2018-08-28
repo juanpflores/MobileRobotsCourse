@@ -1,1 +1,1 @@
-Este es un archivo de prueba para subir a GitHub
+Este es un archivo que se modificó
