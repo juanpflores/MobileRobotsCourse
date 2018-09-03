@@ -1,0 +1,7 @@
+Alumno: Jiménez Jiménez
+Calificación: 10.0
+Comentarios:
+* El programa funciona correctamente. Sólo algunos detalles:
+* La bandera de movimiento tiene un valor por default de 'true',
+* debería comenzar en 'false'.
+* Nombrar el archivo Practica_n.cpp
