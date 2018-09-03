@@ -1,0 +1,10 @@
+Alumno: García Garcés
+Calificación: 9.0
+Comentarios:
+* El programa funciona correctamente, está correctamente sangrado y los nombres
+de las variables reflejan su uso, sin embargo, el código no está documentado.
+* El código fuente no fue colocado dentro de la carpeta 'src' del paquete correspondiente
+* Para que funcionara, se tuvo que mover el archivo 'practica_01.cpp' a la
+carpeta correcta y se tuvo que modificar el archivo 'CMakeLists.txt'.
+* Si persisten estos errores (archivo en el lugar incorrecto) en las prácticas
+subsecuentes, la práctica no será tomada en cuenta. 
