@@ -1,0 +1,5 @@
+Alumno: Eguiarte Morett
+Calificación: 10.0
+Comentarios:
+* Muy bien!! La práctica funciona correctamente.
+* Recomendación: nombrar el archivo fuente como Practica_n.cpp
