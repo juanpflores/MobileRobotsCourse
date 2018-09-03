@@ -1,0 +1,5 @@
+Alumno: Sánchez González
+Calificación: 10.0
+Comentarios:
+* La práctica funciona correctamente, sin embargo, el CMakeLists.txt no estaba modificado,
+* listo para compilar. Para la próxima, se debe subir listo para compilar. 
