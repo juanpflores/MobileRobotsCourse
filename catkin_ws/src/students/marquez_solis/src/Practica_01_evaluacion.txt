@@ -1,0 +1,10 @@
+Alumno: Márquez Solís
+Calificación: 10.0
+Comentarios:
+* La práctica funciona correctamente, sin embargo, hay varias recomendaciones:
+* Nombrar el archivo fuente 'Practica_n.cpp"
+* Nombrar los tópicos como se pide, de otro modo, se dificultan las pruebas.
+* Es correcto el uso de clases, sin embargo, se debe ser congruente: los
+* suscriptores y callbacks se declaran como miembros de la clase Context, pero
+* no así con los publicadores. Para ser congruente, los publicadores también
+* deberían ser parte de la clase Context.
