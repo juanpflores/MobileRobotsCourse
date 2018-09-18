@@ -1,0 +1,12 @@
+Alumno: Sandoval Penilla
+Calificación: 10.0
+Comentarios:
+* El programa es funcional, sin embargo, el comportamiento NO es el que se pidió.
+* Primero, se deben usar los nombres de los tópicos indicados en clase, de otro modo, se
+* dificultan las pruebas de desempeño.
+* Segundo, el tópico de tipo bool debe indicar el inicio del movimiento, no el bloqueo del robot. En
+* futuras prácticas se deben respetar las especificaciones dadas en clase.
+* Tercero, el nodo publica todo el tiempo la velocidad de la base, lo que dificulta la operación con
+* con la interfaz gráfica. En clase se dijo que el nodo debe dejar de publicar (no publicar cero)
+* cuando la bandera de movimiento está en false.
+* De no atender los comentarios, las prácticas subsecuentes serán calificadas como no funcionales. 
