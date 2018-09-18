@@ -28,10 +28,8 @@ class Practica02:
         self.run = False
         
         # Obtencion de parametros
-        self.a = 0.0 # 0.0 rad por defecto
+        self.ag = 0.0 # 0.0 rad por defecto
         self.type = "diff" #metodo diff holonomico por defecto
-        
-        
         
         # validacion de parametros        
         if rospy.has_param("~x") and rospy.has_param("~y"):
@@ -48,9 +46,8 @@ class Practica02:
                 self.run = False
         
         if rospy.has_param("~a"):
-            self.a = rospy.get_param("~a")
+            self.ag = rospy.get_param("~a")
             
-
         # Borramos los parametros para una nueva ejecucion
         try:
             rospy.delete_param("~x")
@@ -69,24 +66,10 @@ class Practica02:
         self.publisher = rospy.Publisher('/hardware/mobile_base/cmd_vel',
                                   Twist,
                                   queue_size=1)
-                                  
-                                  
-    def main(self):
-        if self.run and self.type == "diff":
-            print("metodo diff")
-            self.holonomico()
-        elif self.run and self.type == "omni":
-            print("metodo omni")
-            self.omni()
-        
-        
-            
-            
-        
-        
-        
-    def omni(self):
-        print("Executing position control for an OMNIDIRECTIONAL base with \n Goal X={} \tGoal Y={} \tGoal Angle={}".format(self.xg,self.yg,self.a))            
+                
+    def diferencial(self):
+        print("Executing position control for an DIFFERENTIAL base with \n Goal X={} \tGoal Y={} \tGoal Angle={}".format(self.xg,self.yg,self.ag))            
+   
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             try:
@@ -104,51 +87,38 @@ class Practica02:
                     tf.ExtrapolationException):
                     pass
                 
-                            
+            goal = False
             xr = trans[0]
             yr = trans[1]
             v_max = 0.5
             a = 1
-            thr = math.atan2(rot[2],rot[3])*2
-            eth = math.atan2(self.yg - yr, self.xg - xr) - thr
-            #distancia al punto
-            dist = math.sqrt((self.yg - yr)**2 + (self.xg - xr)**2)
-            if eth < -math.pi:
-                eth += 2*math.pi
-            elif eth > math.pi:
-                eth += -2*math.pi
+            if not goal:
+                thr = math.atan2(rot[2],rot[3])*2
+                eth = math.atan2(self.yg - yr, self.xg - xr) - thr
+                #distancia al punto
+                dist = math.sqrt((self.yg - yr)**2 + (self.xg - xr)**2)
+                if eth < -math.pi: eth += 2*math.pi
+                elif eth > math.pi: eth += -2*math.pi
+    
+                b = 1
+                w_max = 1   
+                v = v_max*math.exp((-eth**2)/a)
+                w = w_max*(((2)/(1+math.exp(-eth/b)))-1)
                 
-            
-            
-            b = 1
-            w_max = 1   
-            v = v_max*math.exp((-eth**2)/a)
-            w = w_max*(((2)/(1+math.exp(-eth/b)))-1)
-            
-            self.m.linear.x = v
-            if dist < 0.1:
-                self.m.linear.x = 0
-            self.m.angular.z = w
-#            if math.fabs(eth) < 0.1:
-#                self.m.angular.z = 0
-            self.publisher.publish(self.m)
-            
-            
-            
-            #print("""
-#error   = {}            
-#angle   = {}º
-#dist    = {}
-#linear  = {}
-#angular = {}
-#   x    = {}
-#   y    = {}""".format(eth,math.degrees(thr),dist,v,w,xr,yr))
-            
-            
-            rate.sleep()
+                self.m.angular.z = w
+                self.m.linear.x = v
+                self.publisher.publish(self.m)
 
-    def holonomico(self):
-        print("Executing position control for an DIFFERENTIAL base with \n Goal X={} \tGoal Y={} \tGoal Angle={}".format(self.xg,self.yg,self.a))            
+            # el robot esta dentro de la tolerancia po lo que se dejara de avanzar
+            if dist < 0.1:
+                goal = True
+                self.m.linear.x = 0
+                self.publisher.publish(self.m)
+
+            rate.sleep()
+   
+    def omni(self):
+        print("Executing position control for an OMNIDIRECTIONAL base with \n Goal X={} \tGoal Y={} \tGoal Angle={}".format(self.xg,self.yg,self.ag))            
         rate = rospy.Rate(10)
         while not rospy.is_shutdown():
             try:
@@ -165,21 +135,34 @@ class Practica02:
             kp = 1            
             xr = trans[0]
             yr = trans[1]
-            
+            thr = math.atan2(rot[2],rot[3])*2
             
             ex = self.xg - xr
             ey = self.yg - yr
+            ea = self.ag - thr
+            
             
             vx = kp*ex
             vy = kp*ey
+            w  = kp*ea
+            # controlamos la velocidad max, se reduce en un 10% la velocidad
+            while math.fabs(vx) > 0.5 or math.fabs(vy) > 0.5:
+                vx *= 0.9
+                vy *= 0.9
             
-            #print("error = {}".format(xr))
-            
-            self.m.linear.x = vx;
-            self.m.linear.y = vy;
+            self.m.linear.x = vx
+            self.m.linear.y = vy
+            self.m.angular.z = w
             self.publisher.publish(self.m)
             
             rate.sleep()
+            
+            
+    def main(self):
+        if self.run and self.type == "diff":
+            self.diferencial()
+        elif self.run and self.type == "omni":
+            self.omni()
 
 
 if __name__ == '__main__':
