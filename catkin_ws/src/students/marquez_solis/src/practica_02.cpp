@@ -18,7 +18,7 @@ Twist omni_control(const Transform &pose, const Twist& target, double k = 0.25,d
 Twist diff_control(const Transform &pose, const Twist& target, double k = 0.25,double tolerance = 0.05, double turn_ratio = 0.5, double turn_tol = 0.1);
 //Distribucion coseno para intervalos de tolerancia, principal ventaja: es una funcion compacta
 inline double raised_cosine_norm(double arg){
-    return abs(arg) < 1 ? 0.5 + 0.5*cos(arg*PI) : 0; 
+    return std::abs(arg) < 1 ? 0.5 + 0.5*cos(arg*PI) : 0; 
 }
 inline double single_sine_norm(double arg){
     if (arg < -1) return -1;
@@ -30,43 +30,48 @@ inline double single_sine_norm(double arg){
 class Practica2{
     ros::Publisher pub_cmd_vel;
     ros::NodeHandle n;
-    ros::NodeHandle n_private;
     ros::Rate rate;
     Twist output;
     Twist target;
     bool omni;
+    bool ready ;
     //Listener de posicion
     tf2_ros::Buffer tfBuffer;
     tf2_ros::TransformListener tfListener;
 public:
     Practica2() 
         :rate(10),
-         n_private("~"),
+         n("~"),
+         ready(false),
          tfListener(tfBuffer)
        {
            pub_cmd_vel = n.advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel",1);
-           std::string tipo_arg;
-           n_private.getParam("tipo",tipo_arg);
-           omni = tipo_arg == "omni";
-           n_private.getParam("x",target.linear.x);
-           n_private.getParam("y",target.linear.y);
-           n_private.getParam("w",target.angular.z);
         }
+    bool getParams(){
+        if(!n.hasParam("x") || !n.hasParam("y"))
+        {
+            std::cerr << "Parameters \"x\" and \"y\" are required. " << std::endl;
+            return false;
+        }
+        std::string tipo_arg;
+        n.getParam("type",tipo_arg);
+        omni = tipo_arg == "omni";
+        n.getParam("w",target.angular.z);
+        ready = n.getParam("x",target.linear.x) &&
+           n.getParam("y",target.linear.y);
+        return ready;
+    }
     void loop(){
         unsigned long k;
+        if(!ready) return;
 	while (ros::ok()){
 		ros::spinOnce();
                 k++;
                 try{
-                    //Dada la razonable tristeza por la cual los tipos de datos de geometry_msgs y tf2
-                    //no son compatibles, hay que realizar este procedimiento
-                    
                     //No se puede convertir mediante fromMsg si no tiene estampa de tiempo
                     tf2::Stamped<Transform> tf_main;
                     
-                    //Puede generar excepciones si el buffer esta vacío y
-                    //la nomenclatura es diferente (no se utiliza '/')
-                    auto geom_tf = tfBuffer.lookupTransform("map","base_link",ros::Time(0));
+                    auto geom_tf = tfBuffer.lookupTransform("map","base_link",ros::Time(0),ros::Duration(2.0));
                     
                     //Lo que se busca
                     tf2::fromMsg(geom_tf,tf_main);
@@ -82,7 +87,7 @@ public:
                         std::cout << geom_tf << std::endl;
                     }
                 //Ignorar excepciones (mala idea en general)
-                }catch(...){
+                }catch(tf2::TransformException e){
                     
                 }
                 rate.sleep();
@@ -92,6 +97,10 @@ public:
 int main(int argc,char** argv){
 	ros::init(argc,argv,"practica_02");
         Practica2 app;
+        if(!app.getParams()){
+            std::cerr << "Error Invalid arguments." << std::endl;
+            return -1;
+        }
         app.loop();
 	return 0;
 }
@@ -125,16 +134,22 @@ Twist omni_control(const Transform &pose, const Twist& target, double k,double t
 }
 Twist diff_control(const Transform &pose, const Twist& target, double k,double tolerance, double turn_ratio, double turn_tol){
     Twist out;
+    //Dirección hacia el objetivo
     auto delta = Vector3(target.linear.x,target.linear.y,0) - pose.getOrigin();
-    double dist_s = delta[0] + delta[1];
+    //Distancia manhatttan
+    double dist_s = std::abs( delta[0]) + std::abs(delta[1]);
+    //Cuaternion de orientacion del robot
     auto rot = pose.getRotation();
+    //Angulo del robot
     double angle = tf2::getYaw(rot);
+    //Error de angulo
     double angle_error = norm_angle( atan2(delta[1],delta[0]) - angle);
+    //El resultado es siempre un vector en X de magnitud dependiente del error del angulo y tolerancia
     auto vel_vector = Vector3(k,0,0)*raised_cosine_norm(angle_error/turn_tol)*(1-raised_cosine_norm(dist_s/tolerance));
     //  std::cout << "angle " << angle << " target " <<  atan2(delta[1],delta[0]) << "error" << angle_error << std::endl;
     out.linear = tf2::toMsg(vel_vector);
     out.linear.z = 0;
-    //Multiplicar dirección de giro por tasa de giro e intervalo de tolerancia
+    
     out.angular.z = turn_ratio*single_sine_norm(angle_error/turn_tol);
     return out;
 }
