@@ -140,6 +140,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(practica_01_node src/practica_01.cpp)
+add_executable(practica_02_node src/practica_02.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,9 +151,13 @@ add_executable(practica_01_node src/practica_01.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(practica_01_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_02_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(practica_01_node
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(practica_02_node
   ${catkin_LIBRARIES}
 )
 
