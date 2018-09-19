@@ -14,7 +14,7 @@ using tf2::Transform;
 using geometry_msgs::Twist;
 constexpr double PI = 3.1415926535897932384626433832795028841971;
 
-Twist omni_control(const Transform &pose, const Twist& target, double k = 0.25,double tolerance = 0.05, double turn_ratio = 0.05);
+Twist omni_control(const Transform &pose, const Twist& target, double k = 0.25,double tolerance = 0.05, double turn_ratio = 0.1);
 
 class Practica2{
     ros::Publisher pub_cmd_vel;
@@ -66,7 +66,7 @@ public:
                     
                     //Sólo mostrar el estado cada 8 tiempos
                     if(k % 8 == 0){
-                        std::cout << geom_tf << std::endl;
+                        //std::cout << geom_tf << std::endl;
                     }
                 //Ignorar excepciones (mala idea en general)
                 }catch(...){
@@ -101,10 +101,11 @@ Twist omni_control(const Transform &pose, const Twist& target, double k,double t
     rot[3] = -rot[3];
     //Aplicar rotacción y escalar
     auto vel_vector = tf2::quatRotate (rot,delta)*k*(1-1/(dist_s/(tolerance*tolerance)+1));
-    double angle_error = norm_angle(angle - target.angular.z);
+    double angle_error = norm_angle( target.angular.z - angle);
     
+    std::cout << "angle " << angle << " target " << target.angular.z << "error" << angle_error << std::endl;
     out.linear = tf2::toMsg(vel_vector);
     out.linear.z = 0;
-    out.angular.z = angle_error*turn_ratio*(1-1/(angle_error*angle_error + 1));
+    out.angular.z = angle_error*turn_ratio*(1-1/(angle_error*angle_error*PI*PI*4 + 1));
     return out;
 }
