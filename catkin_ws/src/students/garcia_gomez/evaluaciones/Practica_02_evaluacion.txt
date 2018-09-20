@@ -1,0 +1,3 @@
+Alumno: García Gómez
+Calificación: 0.0
+Comentarios: la práctica no fue entregada.
