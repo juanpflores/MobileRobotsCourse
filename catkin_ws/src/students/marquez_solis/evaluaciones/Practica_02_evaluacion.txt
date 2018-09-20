@@ -1,0 +1,7 @@
+Alumno: Márquez Solís
+Calificación: 10.0
+Comentarios:
+La práctica funciona correctamente.
+El uso de clases se recomienda cuando el problema a resolver se facilita con el uso
+de la POO, es decir, cuando se requiere encapsulamiento, herencia y/o polimorfismo.
+De otro modo, sólo se tiene una solución más complicada para llegar a la misma solución. 
