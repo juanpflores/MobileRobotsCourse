@@ -1,4 +1,4 @@
 Alumno: Sandoval Penilla
-Calificación: 0.0
+Calificación: 8.0
 Comentarios:
-La práctica no fue entregada.
+Funciona correctamente para el caso diferencial pero falla en algunos casos para el omnidireccional. 
