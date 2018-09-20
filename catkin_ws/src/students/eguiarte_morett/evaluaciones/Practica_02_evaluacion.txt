@@ -1,0 +1,13 @@
+Alumno: Eguiarte Morett
+Calificación: 3.6
+Comentarios:
+Sólo funciona para el caso omnidireccional.
+Falla para el diferencial porque al final se hace una transformación que no es necesaria:
+
+//Se calcula la velocidad lineal en el sistema de referencia absoluto
+v_x = v_a * cos(robot_a);
+v_y = v_a * sin(robot_a);
+
+Además, no se están respetando las velocidades máximas de 0.5 lineal y 0.5 angular.
+Puesto que solo funciona en algunos casos, la calificación habría sido 6.0, pero
+como se entregó dos horas tarde, se califica sobre 6.0, por lo que la calificación final es 3.6.
