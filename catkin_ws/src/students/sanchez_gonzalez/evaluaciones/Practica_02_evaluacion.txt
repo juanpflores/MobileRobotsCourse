@@ -1,0 +1,7 @@
+Alumno: Sánchez González
+Calificación: 6.0
+Comentarios:
+Funciona solo en algunos casos.
+Para el caso omnidireccional no se corrige el ángulo. Estos es debido a que en el código falta
+asignar la velocidad angular al mensaje cmd_vel.
+Para el caso diferencial, la velocidad angular corresponde a la componente en Z, no X.
