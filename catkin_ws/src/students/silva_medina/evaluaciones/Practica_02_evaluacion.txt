@@ -1,0 +1,6 @@
+Alumno: Silva Medina
+Calificación: 1.8
+Comentarios:
+No se mueve en ninguno de los casos. Puesto que la práctica compila pero no funciona,
+la calificación sería 3.0, sin embargo, como se subió tarde, se califica sobre 6.0,
+por lo que la calificación final es 1.8.
