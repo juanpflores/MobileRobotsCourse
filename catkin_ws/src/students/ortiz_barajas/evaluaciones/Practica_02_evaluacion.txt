@@ -1,0 +1,10 @@
+Alumno: Ortiz Barajas
+Calificación: 6.0
+Comentarios:
+Sólo funciona en algunos casos.
+En el caso omnidireccional falta asignal la velocidad angular.
+Para el caso diferencial, la componente en Y de la velocidad lineal debe ser cero.
+No es necesaria la transformación:
+msg_cmd_vel.linear.x = v*cos(error_a);
+msg_cmd_vel.linear.y = v*sin(error_a);
+
