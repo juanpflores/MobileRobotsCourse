@@ -1,0 +1,20 @@
+Alumno: Carranza Ayala
+Calificación: 6.0
+Comentarios: Funciona sólo en algunos casos.
+* Falló con la posición objetivo: (-1,-1 ), (0,0)
+
+Al acotar la velocidad:
+if (msg_cmd_vel.linear.x < 0.5)
+   msg_cmd_vel.linear.x = -vmax;
+if (msg_cmd_vel.linear.y < 0.5)
+   msg_cmd_vel.linear.y = -vmax;
+
+Debería ser:
+if (msg_cmd_vel.linear.x < -0.5)
+   msg_cmd_vel.linear.x = -vmax;
+if (msg_cmd_vel.linear.y < -0.5)
+   msg_cmd_vel.linear.y = -vmax;
+(Falta un signo menos en la condición)
+
+Además, para el caso de una base diferencial, el error de posición se calcula como:
+error_a = atan2(error_y, error_x) - robot_a;
