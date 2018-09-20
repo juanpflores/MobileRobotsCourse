@@ -1,0 +1,6 @@
+Alumno: Jiménez Jiménez
+Calificación: 6.0
+Comentarios:
+El programa solo funciona para algunos casos.
+Tanto el caso omnidireccional como el diferencial están mal calculados.
+Se debe modificar el archivo CMakeLists.txt para que la practica esté lista para compilar. 
