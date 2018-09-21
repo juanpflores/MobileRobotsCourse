@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     	return -1;
     }
     //Variables required for the position control
-    float robot_x, robot_y,robot_a, goal_x, goal_y, goal_a, error_x, error_y, error_a, v_x_a, v_y_a, w, v_x, v_y, v_a, Kp = 0.5;
+    float robot_x, robot_y,robot_a, goal_x, goal_y, goal_a, error_x, error_y, error_a, v_x_a, v_y_a, w, v_x, v_y, v_a, Ka= 1.0, Kv = 1.0;
     std::string control_type = "";
 
     //Getting parameteres to set goal position and control type.
@@ -83,12 +83,18 @@ int main(int argc, char** argv)
           //error de angulo: angulo deseado -  angulo actual
            error_a = goal_a - robot_a;
           //Efectuando un control proporcional
-           v_x_a = Kp * error_x;
-           v_y_a = Kp * error_y;
-           w = Kp *  error_a;
+           v_x_a = Kv * error_x;
+           v_y_a = Kv * error_y;
+           w = Ka *  error_a;
           //Obteniendo la velocidad lineal para ambos ejes de movimiento
            v_x = v_x_a * cos(robot_a) + v_y_a * sin(robot_a);
            v_y = -v_y_a * sin(robot_a) + v_y_a * cos(robot_a);
+           if(v_x > 0.5) v_x = 0.5;
+           if(v_x < -0.5) v_x = -0.5;
+           if(v_y > 0.5) v_y = 0.5;
+           if(v_y < -0.5) v_y = -0.5;
+           if(w > 0.5) v_y = 0.5;
+           if(w < -0.5) v_y = -0.5;
          }else{//Si no, el control es diferencial
           //error de posicion: posicion deseada - posicion actual
            error_x = goal_x - robot_x;
@@ -104,16 +110,17 @@ int main(int argc, char** argv)
               error_a-=2*M_PI;
           //si la distancia hasta el punto meta es mayor o igual que 0.1 mts calculamos la funcion de velocidad lineal y angular (gaussiana y sigmoide respectivamente)
           if(sqrt(error_x*error_x + error_y*error_y)>=0.1){
-            v_a = Kp * exp(-error_a*error_a/0.5);
-            w = Kp *  (2/(1 + exp(-error_a/0.5))-1);
+            v_x = Kv * exp(-error_a*error_a/0.5);
+            w = Ka *  (2/(1 + exp(-error_a/0.5))-1);
           } //si no, el robot ha llegado al punto meta, por lo que debemos detenerlo
           else{
-            v_a = 0;
+            v_x = 0;
             w = 0;
           }
+          /*el robot es inercial, no se necesita esto*/
           //Se calcula la velocidad lineal en el sistema de referencia absoluto
-           v_x = v_a * cos(robot_a);
-           v_y = v_a * sin(robot_a);
+           //v_x = v_a * cos(robot_a);
+           //v_y = v_a * sin(robot_a);
            
          }
         //Publicamos velocidad lineal y angular del robot
