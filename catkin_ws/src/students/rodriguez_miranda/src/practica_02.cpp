@@ -107,10 +107,8 @@ int main(int argc, char** argv)
 
 	  //Asignando valores a la velocidad
 	msg_cmd_vel.linear.x=v;
-	msg_cmd_vel.linear.y=v;
-	//Condición para que deje de publicar
-	if(goal_x!=robot_x && goal_y!=robot_y)
-	   pub_cmd_vel.publish(msg_cmd_vel);
+	msg_cmd_vel.linear.y=0;
+        pub_cmd_vel.publish(msg_cmd_vel);
          
       }
     //Para el omnidireccional
