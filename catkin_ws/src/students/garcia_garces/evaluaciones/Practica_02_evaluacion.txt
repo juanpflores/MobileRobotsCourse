@@ -1,0 +1,10 @@
+Alumno: García Garcés
+Calificación: 3.6
+Comentarios:
+
+Sólo funciona para el caso omnidireccional.
+En el caso diferencial no funciona porque falta calcular la velocidad angular.
+Además la componente en Y de la vel lineal debe ser cero.
+
+La práctica solo funciona en algunos casos por lo que la calificación seria 6.0,
+pero como se entregó tarde, se califica sobre 6.0, por lo que la calificación final es 3.6.
