@@ -94,8 +94,10 @@ int main(int argc, char** argv)
       if(control_type == "diff"){
 	float error_a = atan2(error_y,error_x) - robot_a;
 	float vell_max = 0.5;
-	float alpha = 3.0;
-	float factor_l,vel_l;
+	float vela_max = 0.5;
+	float alpha = 0.5;
+	float beta = 0.5;
+	float factor_l,vel_l,vel_a;
 
 	if(error_a < -pi)
 	  error_a += 2.0*pi;
@@ -105,23 +107,44 @@ int main(int argc, char** argv)
 	factor_l = exp(-(error_a*error_a)/alpha);
 	vel_l = vell_max*factor_l;
 
-	msg_cmd_vel.linear.x = vel_l;
-	msg_cmd_vel.linear.y = vel_l;
-      
-	if(error_x < 0.1)
-	  msg_cmd_vel.linear.x = 0.0;
-	if(error_y < 0.1)
-	  msg_cmd_vel.linear.y = 0.0;   
+	vel_a = vela_max*(2/(1+exp(-error_a/beta))-1);
+
+	if(sqrt(error_x*error_x + error_y*error_y) > 0.1)
+	  {
+	    msg_cmd_vel.linear.x = vel_l;
+     	    msg_cmd_vel.linear.y = 0.0;
+	    msg_cmd_vel.angular.z = vel_a;
+	  }
+	else{
+	    msg_cmd_vel.linear.x = 0.0;
+	    msg_cmd_vel.linear.y = 0.0;
+	    msg_cmd_vel.angular.z = 0.0;
+	  }
       }
+      
       
       //Control para robot omnidireccional
       if(control_type == "omni"){
 	float error_a = goal_a - robot_a;
-	float k = 0.3;
+	float kd = 1.0;
+	float ka = 1.0;
 
-	float vel_x = k*error_x*cos(robot_a) + k*error_y*sin(robot_a);
-	float vel_y = -k*error_x*sin(robot_a) + k*error_y*cos(robot_a);
-	float vel_a = k*error_a;
+	float vel_x = kd*error_x*cos(robot_a) + kd*error_y*sin(robot_a);
+	float vel_y = -kd*error_x*sin(robot_a) + kd*error_y*cos(robot_a);
+	float vel_a = ka*error_a;
+
+	if(vel_x > 0.5)
+	  vel_x = 0.5;
+	if(vel_x < -0.5)
+	  vel_x = -0.5;
+       	if(vel_y > 0.5)
+	  vel_y = 0.5;
+	if(vel_y < -0.5)
+	  vel_y = -0.5;
+      	if(vel_a > 0.5)
+	  vel_a = 0.5;
+	if(vel_a < -0.5)
+	  vel_a = -0.5;
 
 	msg_cmd_vel.linear.x = vel_x;
 	msg_cmd_vel.linear.y = vel_y;
