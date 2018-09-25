@@ -88,28 +88,41 @@ int main(int argc, char** argv)
     if(control_type=="diff")
       {
 	//Variables de calculo de velocidad del diferencial
-        float alfa=3;
+        float alfa=0.5;
+	float beta=0.5;
 	float vmax=0.5;
+	float wmax=0.5;
 	float ex=goal_x-robot_x;
 	float ey=goal_y-robot_y;
 	float etheta=atan2(ey,ex)-robot_a;
         float v;
+	float w;
+
+	//COndicion para que ethtea tenga valores siempre
 	if( etheta<-3.141516)
 	  {
 	    etheta+=2*3.141516;
 	  }
 	if (etheta>3.141516)
 	  {     
-	      etheta+=2*3.141516;
+	      etheta-=2*3.141516;
 	  }
 
 	v=vmax*(exp(-etheta*etheta/alfa));
+	w=wmax*(2/(1+exp(-etheta/beta))-1);
 
-	  //Asignando valores a la velocidad
+	if(sqrt(ex*ex + ey*ey)>0.1)
+         {	   
+        //Asignando valores a la velocidad
 	msg_cmd_vel.linear.x=v;
 	msg_cmd_vel.linear.y=0;
-        pub_cmd_vel.publish(msg_cmd_vel);
-         
+        msg_cmd_vel.angular.z=w;
+         }
+	else{
+	  msg_cmd_vel.linear.x=0;
+	  msg_cmd_vel.linear.y=0;
+	  msg_cmd_vel.angular.z=0;
+	}
       }
     //Para el omnidireccional
     if(control_type=="omni") //para que lo ejecute cuando es el omni
@@ -118,26 +131,43 @@ int main(int argc, char** argv)
 	float exomni=goal_x-robot_x;
 	float eyomni=goal_y-robot_y;
 	float ethetaomni=goal_a-robot_a;
-	float vx=2*exomni;
-	float vy=2*eyomni;
-        if( ethetaomni<-3.141516)
-	  ethetaomni+=2*3.141516;
-	if(ethetaomni>3.141516)
-	  ethetaomni+=2*3.141516;
-	
+	float vx=1*exomni;
+	float vy=1*eyomni;
+
 	float vxomni=vx*cos(robot_a)+vy*sin(robot_a);
         float vyomni=-vx*sin(robot_a)+vy*cos(robot_a);
-	//	float w= 2*ethetaomni;
-	//Cuando llega al punto deja de pulicar
-	if(goal_x!=robot_x && goal_y!=robot_y)
-	  {
+	float womni= 1*ethetaomni;
+
+	//Para que funcione a 0.5 
+	if(vxomni>0.5)
+	  vxomni=0.5;
+	if(vxomni<-0.5)
+	  vxomni=-0.5;
+	if(vyomni>0.5)
+	  vyomni=0.5;
+	if(vyomni<-0.5)
+	  vyomni=-0.5;
+	if(womni>0.5)
+	  womni=0.5;
+	if(womni<-0.5)
+	  womni=-0.5);
+    //Para que se detenga al 0.1 
+    if(sqrt(exomni*exomni + eyomni*eyomni)>0.1)
+      {
 	    msg_cmd_vel.linear.x=vxomni;
-	     msg_cmd_vel.linear.y=vyomni;
-	  
-	    pub_cmd_vel.publish(msg_cmd_vel);
-	  }
+	    msg_cmd_vel.linear.y=vyomni;
+	    msg_cmd_vel.angular.z=womni;
+      }  
+    else
+      {
+	msg_cmd_vel.linear.x=0;
+	msg_cmd_vel.linear.y=0;
+	msg_cmd_vel.angular.z=0;
+
+      }
 	
       }
+        pub_cmd_vel.publish(msg_cmd_vel);
 	ros::spinOnce();
 	loop.sleep();
     }
