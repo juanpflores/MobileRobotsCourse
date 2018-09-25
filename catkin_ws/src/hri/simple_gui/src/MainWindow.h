@@ -49,6 +49,9 @@ public slots:
     void btnCmdVelPressed();
     void btnCmdVelReleased();
 
+    void navBtnCalcPath_pressed();
+    
+
 private:
     Ui::MainWindow *ui;
 };
