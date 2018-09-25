@@ -29,6 +29,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->btnRight, SIGNAL(released()), this, SLOT(btnRightReleased()));
     QObject::connect(ui->btnCmdVel, SIGNAL(pressed()), this, SLOT(btnCmdVelPressed()));
     QObject::connect(ui->btnCmdVel, SIGNAL(released()), this, SLOT(btnCmdVelReleased()));
+
+    QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
+    
 }
 
 MainWindow::~MainWindow()
@@ -137,4 +142,77 @@ void MainWindow::btnCmdVelPressed()
 void MainWindow::btnCmdVelReleased()
 {
     qtRosNode->stop_publishing_cmd_vel();
+}
+
+void MainWindow::navBtnCalcPath_pressed()
+{
+    float startX = 0;
+    float startY = 0;
+    float startA = 0;
+    float goalX = 0;
+    float goalY = 0;
+    float goalA = 0;
+    std::vector<std::string> parts;
+
+    std::string str = this->ui->navTxtStartPose->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(str.compare("") == 0 || str.compare("robot") == 0) //take robot pose as start position
+    {
+        this->ui->navTxtStartPose->setText("Robot");
+        qtRosNode->get_robot_pose(startX, startY, startA);
+    }
+    else if(parts.size() >= 2) //Given data correspond to numbers
+    {
+        std::stringstream ssStartX(parts[0]);
+        std::stringstream ssStartY(parts[1]);
+        if(!(ssStartX >> startX) || !(ssStartY >> startY))
+        {
+            this->ui->navTxtStartPose->setText("Invalid format");
+            return;
+        }
+    }
+    else
+    {
+	this->ui->navTxtStartPose->setText("Invalid format");
+	return;
+    }
+	
+    str = this->ui->navTxtGoalPose->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
+    {
+        std::stringstream ssGoalX(parts[0]);
+        std::stringstream ssGoalY(parts[1]);
+        if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
+        {
+            this->ui->navTxtStartPose->setText("Invalid format");
+            return;
+        }
+    }
+    else
+    {
+	this->ui->navTxtGoalPose->setText("Invalid format");
+	return;
+    }
+
+    switch(ui->navCmbMethod->currentIndex())
+    {
+    case 0:	
+        qtRosNode->call_breadth_first_search(startX, startY, goalX, goalY);
+        break;
+    case 1:
+        qtRosNode->call_depth_first_search(startX, startY, goalX, goalY);
+        break;
+    case 2:
+        qtRosNode->call_dijkstra_search(startX, startY, goalX, goalY);
+        break;
+    case 3:
+        qtRosNode->call_a_star_search(startX, startY, goalX, goalY);
+        break;
+    default:
+        std::cout << "SimpleGUI.->Sorry. Somebody really stupid programmed this shit. " << std::endl;
+        break;
+    }
 }
