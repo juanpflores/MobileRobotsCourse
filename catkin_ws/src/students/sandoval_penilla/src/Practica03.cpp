@@ -8,7 +8,7 @@
 #include "nav_msgs/GetPlan.h"
 #include "nav_msgs/GetMap.h"
 #include "PathPlanner.h"
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "Sandoval_Penilla"
 
 ros::ServiceClient cltGetMap;
 nav_msgs::Path     msgPath;
