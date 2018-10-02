@@ -67,7 +67,8 @@ bool PathPlanner::algorithm(float start_x, float start_y, float goal_x, float go
     }
     current_node = &nodes[idx_start];
     current_node->distance     = 0;
-    current_node->in_open_list = true;    
+    current_node->in_open_list = true; 
+    current_node->f_value = Node::manhattan_distance((int) start_x, (int) start_y, (int)goal_x, (int)goal_y);  
 
     if(mode == BFS) open_list_bfs.push(current_node);
     if(mode == DFS) open_list_dfs.push(current_node);
@@ -124,8 +125,8 @@ bool PathPlanner::algorithm(float start_x, float start_y, float goal_x, float go
                 //For ASTAR use manhattan distance heuristic for the cost function heap criteria
                 if(mode == ASTAR){
                     int x, y;
-                    x = (int)(neighbor->index % map.info.width)*map.info.resolution + (int)start_x;
-                    y = (int)(neighbor->index / map.info.width)*map.info.resolution + (int)start_y;
+                    x = (int)(neighbor->index % map.info.width)*map.info.resolution +  map.info.origin.position.x;
+                    y = (int)(neighbor->index / map.info.width)*map.info.resolution +  map.info.origin.position.y;
                     neighbor->f_value = neighbor->distance + Node::manhattan_distance(x, y, (int)goal_x, (int)goal_y);
                 }
             }

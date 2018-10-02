@@ -18,7 +18,7 @@ public:
     bool  in_closed_list;  //A value indicating whether this node is in the closed list or not.
     Node* parent;          //A pointer to the parent of this node.
     static int manhattan_distance(int x, int y, int goal_x, int goal_y){ //Manhattan Distance Heuristic for A*
-        return std::abs(x - y) + std::abs(goal_x - goal_y); 
+        return std::abs(x - goal_x) + std::abs(y - goal_y); 
     } 
 };
 
