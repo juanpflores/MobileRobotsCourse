@@ -150,7 +150,7 @@ int main(int argc, char** argv)
 	if(womni>0.5)
 	  womni=0.5;
 	if(womni<-0.5)
-	  womni=-0.5);
+	  womni=-0.5;
     //Para que se detenga al 0.1 
     if(sqrt(exomni*exomni + eyomni*eyomni)>0.1)
       {
