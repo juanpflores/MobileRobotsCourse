@@ -501,7 +501,7 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
      * THIS IS WHERE THE ALGORITHM ENDS
     */
 
-    std::cout << "Path found using Dijkstra after " << runtime_steps << " steps." << std::endl;
+    std::cout << "Path found using A* after " << runtime_steps << " steps." << std::endl;
     /*
      * Transform all nodes (cells with a corresponding index) to metric coordinates and add them to the resulting path.
      */
