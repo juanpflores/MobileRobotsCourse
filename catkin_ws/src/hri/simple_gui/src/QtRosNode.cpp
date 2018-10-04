@@ -115,6 +115,26 @@ bool QtRosNode::call_a_star_search(float start_x, float start_y, float goal_x, f
     return cltAStar.call(srv);
 }
 
+void QtRosNode::set_param_inflation_radius(float inflation_radius)
+{
+    n->setParam("/navigation/path_planning/inflation_radius", inflation_radius);
+}
+
+void QtRosNode::set_param_nearness_radius(float nearness_radius)
+{
+    n->setParam("/navigation/path_planning/nearness_radius",  nearness_radius);
+}
+
+void QtRosNode::set_param_smoothing_alpha(float smoothing_alpha)
+{
+    n->setParam("/navigation/path_planning/smoothing_alpha",  smoothing_alpha);
+}
+  
+void QtRosNode::set_param_smoothing_beta(float  smoothing_beta)
+{
+    n->setParam("/navigation/path_planning/smoothing_beta" ,  smoothing_beta);
+}
+
 void QtRosNode::get_robot_pose(float& robot_x, float& robot_y, float& robot_a)
 {
     tf::StampedTransform t;
