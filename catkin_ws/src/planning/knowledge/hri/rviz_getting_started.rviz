@@ -7,7 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /Grid1/Offset1
-        - /Path1
       Splitter Ratio: 0.5
     Tree Height: 435
   - Class: rviz/Selection
@@ -28,7 +27,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: LaserScan
 Visualization Manager:
   Class: ""
   Displays:
@@ -255,8 +254,18 @@ Visualization Manager:
       Color Scheme: map
       Draw Behind: false
       Enabled: true
-      Name: Map
+      Name: OriginalMap
       Topic: /navigation/localization/map
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
+    - Alpha: 0.699999988
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: InflatedMap
+      Topic: /navigation/path_planning/inflated_map
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -290,7 +299,7 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
-    - Alpha: 1
+    - Alpha: 0.699999988
       Buffer Length: 1
       Class: rviz/Path
       Color: 255; 0; 0
@@ -299,8 +308,8 @@ Visualization Manager:
       Head Length: 0.200000003
       Length: 0.300000012
       Line Style: Billboards
-      Line Width: 0.0700000003
-      Name: Path
+      Line Width: 0.0500000007
+      Name: OriginalPath
       Offset:
         X: 0
         Y: 0
@@ -310,8 +319,31 @@ Visualization Manager:
       Radius: 0.0299999993
       Shaft Diameter: 0.100000001
       Shaft Length: 0.100000001
-      Topic: /navigation/path_planning/path
-      Unreliable: true
+      Topic: /navigation/path_planning/original_path
+      Unreliable: false
+      Value: true
+    - Alpha: 0.699999988
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 0; 0; 255
+      Enabled: true
+      Head Diameter: 0.300000012
+      Head Length: 0.200000003
+      Length: 0.300000012
+      Line Style: Billboards
+      Line Width: 0.0500000007
+      Name: SmoothedPath
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.0299999993
+      Shaft Diameter: 0.100000001
+      Shaft Length: 0.100000001
+      Topic: /navigation/path_planning/smoothed_path
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
@@ -347,11 +379,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Scale: 58.6935616
+      Scale: 66.5168228
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 5.47101498
-      Y: 2.93528676
+      X: 5.86469698
+      Y: 3.601403
     Saved: ~
 Window Geometry:
   Displays:
