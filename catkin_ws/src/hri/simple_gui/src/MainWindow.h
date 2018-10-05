@@ -50,7 +50,8 @@ public slots:
     void btnCmdVelReleased();
 
     void navBtnCalcPath_pressed();
-    
+
+    void txtSmoothingReturnPressed();
 
 private:
     Ui::MainWindow *ui;
