@@ -1,0 +1,24 @@
+Alumno: Carranza Ayala
+Calificación: 8.0
+Comentarios: 
+* Calcula bien las rutas pero A* no se está haciendo correctamente.
+* A* debería poder calcular las rutas en muchos menos pasos que Dijkstra.
+* Esto se debe a que se está calculando mal la heurística. Las líneas:
+
+         //Obtain the X and Y coordinates of the neighbor to calculate Manhattan distance
+        int x1 = (neighbor->index % map.info.width)*map.info.resolution + int(start_x);
+        int y1 = (neighbor->index / map.info.width)*map.info.resolution + int(start_y);
+
+        //Calulate Manhattan distance between neighbor position and goal position as the heuristic
+        int h = std::abs(x1 - int(goal_x)) +
+                std::abs(y1 - int(goal_y));
+
+no están calculando correctamente la distancia de Manhattan. En primera, a x1 y y1 se les debe
+sumar el origen del mapa, no el punto de inicio de la ruta, para calcular correctamente las coordenadas
+métricas a partir de los índices.
+En segunda, el valor h está declarado como entero, por lo que al calcular coordenadas métricas, sólo
+habría cambios en el valor h entre celdas que estén a un metro de distancia entre ellas, es decir, a menos
+de un metro de distancia, todas las celdas tendrían el mismo valor h y por lo tanto no aportaría ninguna ventaja.
+
+int h = abs(neighbor->index%map.info.width - idx_goal%map.info.width);
+    h += abs(neighbor->index/map.info.width - idx_goal/map.info.width);
