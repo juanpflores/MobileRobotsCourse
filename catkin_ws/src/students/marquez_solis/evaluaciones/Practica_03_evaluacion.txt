@@ -1,0 +1,4 @@
+Alumno: Márquez Solís
+Calificación: 6.0
+Comentarios:
+La práctica funciona correctamente pero fue entregada tarde.
