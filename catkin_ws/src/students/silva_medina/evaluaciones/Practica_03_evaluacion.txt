@@ -1,0 +1,7 @@
+Alumno: Silva Medina
+Calificación: 9.0
+Comentarios:
+* La distancia de Manhattan se está calculando correctamente, pero se está calculando en metros.
+* Como esa distancia se asigna a un entero, significa que solo las celdas que estén a más de un metro
+* de distancia entre ellas tendrán un valor h diferente. Esto hace que la heurística no tenga ningún
+* efecto sobre celdas vecinas. 
