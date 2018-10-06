@@ -1,0 +1,9 @@
+Alumno: Rodríguez Miranda
+Calificación: 6.0
+Comentarios: El programa sólo funciona en algunos casos.
+* Falla para A* para prácticamente todos los puntos. Encuentra una ruta que llega al punto meta
+* pero NO es la ruta óptima.
+* La heurística está mal calculada. Para calcular distancia de Manhattan, es mejor usar:
+
+int h = abs(neighbor->index%map.info.width - idx_goal%map.info.width);
+    h += abs(neighbor->index/map.info.width - idx_goal/map.info.width);
