@@ -1,0 +1,8 @@
+Alumno: García Garcés
+Calificación: 9.0
+Comentarios:
+
+En el caso de A*, la ruta se calcula correctamente pero no en el número de pasos óptimo.
+Esto se debe a que la distancia de manhattan se está calculando en metros y luego se asigna
+a un entero, esto es, aquellas celdas con menos de un metro de distancia entre sí, tendrán
+el mismo valor h.
