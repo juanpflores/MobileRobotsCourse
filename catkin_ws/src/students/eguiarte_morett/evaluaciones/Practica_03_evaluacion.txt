@@ -1,0 +1,11 @@
+Alumno: Eguiarte Morett
+Calificación: 10
+Comentarios:
+
+La distancia de manhattan está bien calculada pero está en metros. Al asignarla a un entero, solo
+se toma la parte entera de la distancia en metros, por lo tanto, las celdas que estén a menos de
+un metro entre sí, tendrán el mismo valor h. Para que funcione, la distancia de mahattan debe
+calcularse en número de celdas, no en metros.
+
+La calificación iba a ser 9.0, por la falla en la distancia de Manhattan, pero se toma en cuenta
+el esfuerzo de no repetir código. 
