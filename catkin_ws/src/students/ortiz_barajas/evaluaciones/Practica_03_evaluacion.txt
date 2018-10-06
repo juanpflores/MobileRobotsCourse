@@ -1,0 +1,7 @@
+Alumno: Ortiz Barajas
+Calificación: 9.0
+Comentarios:
+* Primero, la distancia de manhattan se está calculando bien, pero está en metros. El valor f está declarado
+* como entero, por lo que al asignarle la distancia en metros, sólo tendrán un valor diferente aquellas celdas
+* que estén a más de un metro de distancia entre sí, es decir, no habrá efecto sobre celdas vecinas.
+* Segundo, el valor f se debe asignar dentro el if(dist < neighbor->distance)
