@@ -142,7 +142,7 @@ include_directories(
  add_executable(practica_01 src/practica_01.cpp)
  add_executable(practica_02 src/practica_02.cpp)
  add_executable(practica_03 src/practica_03.cpp src/PathPlanner.cpp)
-
+ add_executable(practica_04 src/practica_04.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -157,10 +157,13 @@ add_dependencies(practica_02 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 
 add_dependencies(practica_03 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+add_dependencies(practica_04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 ## Specify libraries to link a library or executable target against
  target_link_libraries(practica_01 ${catkin_LIBRARIES})
  target_link_libraries(practica_02 ${catkin_LIBRARIES})
  target_link_libraries(practica_03 ${catkin_LIBRARIES})
+ target_link_libraries(practica_04 ${catkin_LIBRARIES})
 #############
 ## Install ##
 #############

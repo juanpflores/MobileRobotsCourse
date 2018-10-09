@@ -476,22 +476,15 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
 	    //If the distance from the current node is less than the previously found distance, then change it,
 	    //and set the current node as parent of this neighbor.
 	    Node* neighbor = &nodes[node_neighbors[i]];
-	    
-            //Para calcular la euristica se deben sumar los cuadros en x y en y
-	    //Para ello usaremos un for.
 
-	    int fil, col, result;
-	   
-	    result = 0;
-	    for (fil = neighbor->distance; fil < goal_y; fil++)
-	      for (col = neighbor->distance; col <goal_x; col++)
-		if(fil!=goal_y && col!=goal_x)
-		      result += fil+col;
-	    
-	    int f = current_node->distance + 1+result;
-	    if(f < neighbor->distance)
+	    int dist = current_node->distance+1+map.data[node_neighbors[i]];
+             
+	    if(dist <neighbor ->distance)
 	      {
-		neighbor->distance = f;
+		int h = abs(neighbor ->index%map.info.width - idx_goal%map.info.width);
+		h += abs(neighbor ->index/map.info.width - idx_goal/map.info.width);
+		neighbor->distance=dist;
+		neighbor -> f_value= dist+h;
 		neighbor->parent   = current_node;
 	      }
 	    //If it is not in the open list, add it.
