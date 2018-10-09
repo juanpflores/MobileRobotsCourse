@@ -59,8 +59,8 @@ bool PathPlanner::algorithm(float start_x, float start_y, float goal_x, float go
      */
     for(size_t i=0;  i < map.data.size(); i++)
     {
-	    nodes[i].index          = i;
-	    nodes[i].distance       = INT_MAX;
+        nodes[i].index          = i;
+        nodes[i].distance       = INT_MAX;
         nodes[i].in_open_list   = false;
         nodes[i].in_closed_list = false;
         nodes[i].parent         = NULL;
@@ -125,9 +125,9 @@ bool PathPlanner::algorithm(float start_x, float start_y, float goal_x, float go
                 //For ASTAR use manhattan distance heuristic for the cost function heap criteria
                 if(mode == ASTAR){
                     int x, y;
-                    x = (int)(neighbor->index % map.info.width)*map.info.resolution +  map.info.origin.position.x;
-                    y = (int)(neighbor->index / map.info.width)*map.info.resolution +  map.info.origin.position.y;
-                    neighbor->f_value = neighbor->distance + Node::manhattan_distance(x, y, (int)goal_x, (int)goal_y);
+                    x = (int)(neighbor->index % map.info.width);
+                    y = (int)(neighbor->index / map.info.width);
+                    neighbor->f_value = neighbor->distance + Node::manhattan_distance(x, y, idx_goal%map.info.width, idx_goal/map.info.width);
                 }
             }
             //If it is not in the open list, add it.
