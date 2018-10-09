@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
+    QObject::connect(ui->navRbOmnidirectional, SIGNAL(clicked()), this, SLOT(navRadioButtonCliked()));
+    QObject::connect(ui->navRbDifferential   , SIGNAL(clicked()), this, SLOT(navRadioButtonCliked()));
 
     QObject::connect(ui->navTxtInflation  , SIGNAL(returnPressed()), this, SLOT(txtSmoothingReturnPressed()));
     QObject::connect(ui->navTxtNearness   , SIGNAL(returnPressed()), this, SLOT(txtSmoothingReturnPressed()));
@@ -191,7 +194,7 @@ void MainWindow::navBtnCalcPath_pressed()
         std::stringstream ssGoalY(parts[1]);
         if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
         {
-            this->ui->navTxtStartPose->setText("Invalid format");
+            this->ui->navTxtGoalPose->setText("Invalid format");
             return;
         }
     }
@@ -219,6 +222,50 @@ void MainWindow::navBtnCalcPath_pressed()
         std::cout << "SimpleGUI.->Sorry. Somebody really stupid programmed this shit. " << std::endl;
         break;
     }
+}
+
+void MainWindow::navBtnExecPath_pressed()
+{
+    float goalX = 0;
+    float goalY = 0;
+    float goalA = 0;
+    std::vector<std::string> parts;
+    std::string str = this->ui->navTxtGoalPose->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
+    {
+        std::stringstream ssGoalX(parts[0]);
+        std::stringstream ssGoalY(parts[1]);
+        if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
+        {
+            this->ui->navTxtGoalPose->setText("Invalid format");
+            return;
+        }
+	if(parts.size() >= 3)
+	{
+	    std::stringstream ssGoalA(parts[2]);
+	    if(!(ssGoalA >> goalA))
+	    {
+		this->ui->navTxtGoalPose->setText("Invalid Format");
+		return;
+	    }
+	}
+    }
+    else
+    {
+	this->ui->navTxtGoalPose->setText("Invalid format");
+	return;
+    }
+    qtRosNode->publish_goto_xya(goalX, goalY, goalA);
+}
+
+void MainWindow::navRadioButtonCliked()
+{
+    if(this->ui->navRbDifferential->isChecked())
+	qtRosNode->set_param_control_type("diff");
+    else
+	qtRosNode->set_param_control_type("omni");
 }
 
 void MainWindow::txtSmoothingReturnPressed()
