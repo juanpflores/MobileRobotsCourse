@@ -1,0 +1,4 @@
+Alumno: Sandoval Penilla
+Calificación: 8.0
+Comentarios:
+Funciona correctamente para el caso diferencial pero falla en algunos casos para el omnidireccional. 
