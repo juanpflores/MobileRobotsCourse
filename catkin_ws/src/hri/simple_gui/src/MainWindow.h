@@ -50,7 +50,8 @@ public slots:
     void btnCmdVelReleased();
 
     void navBtnCalcPath_pressed();
-
+    void navBtnExecPath_pressed();
+    void navRadioButtonCliked();
     void txtSmoothingReturnPressed();
 
 private:
