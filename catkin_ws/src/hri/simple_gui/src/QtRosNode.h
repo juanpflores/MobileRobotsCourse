@@ -17,6 +17,7 @@ public:
 
     ros::NodeHandle* n;
     ros::Publisher        pubCmdVel;
+    ros::Publisher        pubGoToXYA;
     ros::ServiceClient    cltBFS;
     ros::ServiceClient    cltDFS;
     ros::ServiceClient    cltDijkstra;
@@ -38,6 +39,9 @@ public:
     bool call_depth_first_search(float start_x, float start_y, float goal_x, float goal_y);
     bool call_dijkstra_search(float start_x, float start_y, float goal_x, float goal_y);
     bool call_a_star_search(float start_x, float start_y, float goal_x, float goal_y);
+
+    void publish_goto_xya(float goal_x, float goal_y, float goal_a);
+    void set_param_control_type(std::string control_type);
 
     void set_param_inflation_radius(float inflation_radius);
     void set_param_nearness_radius(float nearness_radius);
