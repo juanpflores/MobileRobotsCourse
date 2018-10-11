@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>648</width>
-    <height>396</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@ QRadioButton::indicator{
       <x>340</x>
       <y>160</y>
       <width>301</width>
-      <height>141</height>
+      <height>261</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -137,7 +137,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>100</y>
+       <y>220</y>
        <width>101</width>
        <height>17</height>
       </rect>
@@ -150,7 +150,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>100</y>
+       <y>220</y>
        <width>151</width>
        <height>27</height>
       </rect>
@@ -197,6 +197,162 @@ Path</string>
      </property>
      <property name="text">
       <string>Method:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblSmoothing">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>140</y>
+       <width>81</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Smoothing:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblNearness">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>81</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Nearness:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="navTxtNearness">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>190</y>
+       <width>81</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1.0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblInflate">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>165</y>
+       <width>71</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Inflation:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="navTxtInflation">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>165</y>
+       <width>81</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.3</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblSmoothAlpha">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>165</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Alpha:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="navTxtSmoothAlpha">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>165</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.9</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="navTxtSmoothBeta">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>190</y>
+       <width>71</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.1</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblSmoothBeta">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>190</y>
+       <width>51</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Beta:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="navLblRadius">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>121</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Augmented Map:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="navRbOmnidirectional">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Omnidirectional</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="navRbDifferential">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>100</y>
+       <width>117</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Differential</string>
      </property>
     </widget>
    </widget>
