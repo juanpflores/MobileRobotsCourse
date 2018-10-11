@@ -26,27 +26,6 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
 	return map;	
     nav_msgs::OccupancyGrid nearnessMap = map;
 
-    int steps=(nearness_radius / map.info.resolution);
-    int boxSize= (steps*2 +1) * (steps*2 +1);
-    int* distances = new int[boxSize];
-    int* neighbors = new int[boxSize];
-
-    int counter =0;
-    for(int i=-steps; i<=steps; i++)
-      for(int j=-steps; j<=steps; j++)
-	{
-	  neighbors[counter] = i*map.info.width +j;
-	  distances[counter] = (steps -std:: max(std::abs(i), std::abs(j))+1);
-	  counter++;
-	}
-    for(int i=0; i< map.data.size(); i++)
-      if(map.data[i] >40)
-	for(int j=0; j < boxSize; j++)
-	      if(nearnessMap.data[i+neighbors[j]] < distances[j])
-		nearnessMap.data[i+neighbors[j]]=distances[j];
-	    delete[] distances;
-	    delete[] neighbors;
-	    return nearnessMap;
     /* TODO:
      * Implement the alorithm to get the nearness map. For example, if the map is: ('x' indicates an occupied cell)
       0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 3 3 3 3 3 2 1 0 1 1 1 1 1
@@ -57,7 +36,29 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
       0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 2 2 2 2 2 1 0 0 1 2 3 3 3
       Max nearness value will depend on the distance of influence (nearness radius)
     */
-   
+    
+    int celdas= (nearness_radius/ map.info.resolution);
+    int num_casilla=(celdas*2 +1)* (celdas*2 +1);
+    int* distances = new int[num_casilla];
+    int* neighbors = new int[num_casilla];
+
+    int contando =0;
+    for( int i=-celdas; i<=celdas; i++)
+      for(int j=-celdas; j<=celdas; j++)
+	{
+	  neighbors[contando] = i*map.info.width+j;
+	  distances[contando] = (celdas - std::max(std::abs(i) , std::abs(j)) +1);
+	  contando++;
+
+	}
+    for(int i=0; i< map.data.size(); i++)
+      if(map.data[i] >40)
+	for(int j=0; j<num_casilla; j++)
+	  if(nearnessMap.data[i+neighbors[j]] < distances[j])
+	    nearnessMap.data[i+neighbors[j]] = distances[j];
+    delete[] distances;
+    delete[] neighbors;
+    return nearnessMap;
 }
 
 nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float beta)
@@ -72,34 +73,62 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
      * You must find the appropriate values for the rest of parameters.
      */
     
-    float epsilon =0.0001*path.poses.size();
-    float attempts  =10000;
-    float gradiente  =0.00001;
+    float tolerancia =0.0001 * path.poses.size();
+    float intentos  =10000;
+    float epsi_i    =tolerancia+1; //La suma del gradiente de todos los puntos desde 1 hasta k-1
+    float epsi_0    =tolerancia+1; //El gradiente de 0
+    float epsi_k    =tolerancia+1; //El gradiente en k
+    float epsi      =tolerancia+1; //La suma de los tres gradientes
     float delta     =0.3;
-    while(gradiente >= epsilon && --attempts>0)
+
+    //Se coloca esta condición porque queremos que se calcule dentro del rango de puntos, además de que se coloca un limite de interaciones 
+    
+    while(epsi >= tolerancia && --intentos>0) 
       {
-	gradiente=0;
-	for(int i=1; i< path.poses.size() -1; i++)
-	  {
-	    //Para calcular los primeros puntos  xo_oc        
-	    float xo_i = path.poses[i].pose.position.x;
-	    float yo_i = path.poses[i].pose.position.y ;	    
+       
+	    //Para calcular los primeros puntos de la función del gradiente        
+	    float xo_o = path.poses[0].pose.position.x;
+	    float yo_o = path.poses[0].pose.position.y ;	    
+	    float xo_n = newPath.poses[0].pose.position.x;
+	    float yo_n = newPath.poses[0].pose.position.y;
+	    float x1_n = newPath.poses[1].pose.position.x;
+	    float y1_n = newPath.poses[1].pose.position.y;
+	    float grad_x0=delta*(alpha*(xo_n-x1_n)+beta*(xo_n-xo_o));
+	    float grad_y0=delta*(alpha*(yo_n-y1_n)+beta*(yo_n-yo_o));
+	    float epsi_0=fabs(grad_x0) + fabs(grad_y0);
+
+	    //Para calcular los puntos que van desde 1 hasta k                 
+	    for(int i=1; i< path.poses.size() -1; i++)
+	      {	
 	    float xn_i = newPath.poses[i].pose.position.x;
 	    float yn_i = newPath.poses[i].pose.position.y;
-	    	    
-	    //Para calcular los puntos que van desde 1 hasta k
+	    float xo_i = path.poses[i].pose.position.x;
+	    float yo_i = path.poses[i].pose.position.y;
 	    float xn_ip= newPath.poses[i-1].pose.position.x;
 	    float yn_ip= newPath.poses[i-1].pose.position.y;
 	    float xn_in= newPath.poses[i+1].pose.position.x;
 	    float yn_in= newPath.poses[i+1].pose.position.y;
-	    float grad_x = beta*(xn_i - xo_i) + alpha*(2*xn_i - xn_ip - xn_in);
-	    float grad_y = beta*(yn_i - yo_i) + alpha*(2*yn_i - yn_ip - yn_in);
+	    float grad_xi = beta*(xn_i - xo_i) + alpha*(2*xn_i - xn_ip - xn_in);
+	    float grad_yi = beta*(yn_i - yo_i) + alpha*(2*yn_i - yn_ip - yn_in);
             //Asignando valores para la nueva ruta
-	    newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x -delta*grad_x;
-	    newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y -delta*grad_y;
+	    newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x -delta*grad_xi;
+	    newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y -delta*grad_yi;
             //Realizando la suma de todos los gradientes en valor absoluto
-	    gradiente += fabs(grad_x) + fabs(grad_y);
-     	  }
+	    epsi_i += fabs(grad_xi) + fabs(grad_yi);
+     	      }
+	    
+	    //Para calcular los ultimos  puntos de la ruta de la  función del gradiente
+	    float xk_o = path.poses[ path.poses.size() ].pose.position.x;
+	    float yk_o = path.poses[ path.poses.size() ].pose.position.y ;
+	    float xk_n = newPath.poses[ path.poses.size()].pose.position.x;
+	    float yk_n = newPath.poses[ path.poses.size()].pose.position.y;
+	    float xk1_n = newPath.poses[ path.poses.size()-1].pose.position.x;
+	    float yk1_n = newPath.poses[ path.poses.size()-1].pose.position.y;
+	    float grad_xk=delta*(alpha*(xk_n-xk1_n)+beta*(xk_n-xk_o));
+	    float grad_yk=delta*(alpha*(yk_n-yk1_n)+beta*(yk_n-yk_o));
+	    float epsi_k=fabs(grad_xk) + fabs(grad_yk);
+
+	    epsi=epsi_0+epsi_i+epsi_k;
 
       }
 }
