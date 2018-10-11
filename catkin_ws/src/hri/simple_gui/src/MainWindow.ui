@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>648</width>
-    <height>396</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,7 +51,7 @@ QRadioButton::indicator{
       <x>340</x>
       <y>160</y>
       <width>301</width>
-      <height>221</height>
+      <height>261</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -137,7 +137,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>190</y>
+       <y>220</y>
        <width>101</width>
        <height>17</height>
       </rect>
@@ -150,7 +150,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>120</x>
-       <y>190</y>
+       <y>220</y>
        <width>151</width>
        <height>27</height>
       </rect>
@@ -203,7 +203,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>110</y>
+       <y>140</y>
        <width>81</width>
        <height>17</height>
       </rect>
@@ -216,7 +216,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>160</y>
+       <y>190</y>
        <width>81</width>
        <height>17</height>
       </rect>
@@ -229,7 +229,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>160</y>
+       <y>190</y>
        <width>81</width>
        <height>23</height>
       </rect>
@@ -242,7 +242,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>135</y>
+       <y>165</y>
        <width>71</width>
        <height>17</height>
       </rect>
@@ -255,7 +255,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>135</y>
+       <y>165</y>
        <width>81</width>
        <height>23</height>
       </rect>
@@ -268,7 +268,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>135</y>
+       <y>165</y>
        <width>51</width>
        <height>17</height>
       </rect>
@@ -281,7 +281,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>135</y>
+       <y>165</y>
        <width>71</width>
        <height>23</height>
       </rect>
@@ -294,7 +294,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>220</x>
-       <y>160</y>
+       <y>190</y>
        <width>71</width>
        <height>23</height>
       </rect>
@@ -307,7 +307,7 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>170</x>
-       <y>160</y>
+       <y>190</y>
        <width>51</width>
        <height>17</height>
       </rect>
@@ -320,13 +320,39 @@ Path</string>
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>110</y>
-       <width>81</width>
+       <y>140</y>
+       <width>121</width>
        <height>17</height>
       </rect>
      </property>
      <property name="text">
-      <string>Radius:</string>
+      <string>Augmented Map:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="navRbOmnidirectional">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>100</y>
+       <width>131</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Omnidirectional</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="navRbDifferential">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>100</y>
+       <width>117</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Differential</string>
      </property>
     </widget>
    </widget>
