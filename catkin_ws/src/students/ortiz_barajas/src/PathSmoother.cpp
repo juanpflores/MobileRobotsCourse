@@ -101,7 +101,7 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 	newPath.poses[0].pose.position.x = xn_0;
 	newPath.poses[0].pose.position.y = yn_0;
 	
-	grad_mag += ((grad_x*grad_x)+(grad_y*grad_y));
+	grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
 	
 	for(int i=1; i<path.poses.size() -1; i++){
 		float xo_i   = path.poses[i].pose.position.x;
@@ -118,7 +118,7 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
         	newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delta*(grad_x);
 		newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delta*(grad_y);
 		
-		grad_mag += ((grad_x*grad_x)+(grad_y*grad_y));
+		grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
 	}
 
 	float xn_k  = newPath.poses[path.poses.size()].pose.position.x;
@@ -134,9 +134,8 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 	newPath.poses[path.poses.size()].pose.position.x = xn_k - delta*(grad_x);
 	newPath.poses[path.poses.size()].pose.position.y = yn_k - delta*(grad_y);
 	
-	grad_mag += ((grad_x*grad_x)+(grad_y*grad_y));
+	grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
 
-	grad_mag = sqrt(grad_mag);
      }
     
     return newPath;
