@@ -20,6 +20,7 @@ void QtRosNode::run()
 {    
     ros::Rate loop(30);
     pubCmdVel   = n->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 10);
+    pubGoToXYA  = n->advertise<std_msgs::Float32MultiArray>("/navigation/go_to_xya", 10);
     cltBFS      = n->serviceClient<nav_msgs::GetPlan>("/navigation/path_planning/breadth_first_search");
     cltDFS      = n->serviceClient<nav_msgs::GetPlan>("/navigation/path_planning/depth_first_search");
     cltDijkstra = n->serviceClient<nav_msgs::GetPlan>("/navigation/path_planning/dijkstra_search");
@@ -113,6 +114,40 @@ bool QtRosNode::call_a_star_search(float start_x, float start_y, float goal_x, f
     srv.request.goal.pose.position.x = goal_x;
     srv.request.goal.pose.position.y = goal_y;
     return cltAStar.call(srv);
+}
+
+void QtRosNode::publish_goto_xya(float goal_x, float goal_y, float goal_a)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(goal_x);
+    msg.data.push_back(goal_y);
+    msg.data.push_back(goal_a);
+    pubGoToXYA.publish(msg);
+}
+
+void QtRosNode::set_param_control_type(std::string control_type)
+{
+    n->setParam("/navigation/control_type/", control_type);
+}
+
+void QtRosNode::set_param_inflation_radius(float inflation_radius)
+{
+    n->setParam("/navigation/path_planning/inflation_radius", inflation_radius);
+}
+
+void QtRosNode::set_param_nearness_radius(float nearness_radius)
+{
+    n->setParam("/navigation/path_planning/nearness_radius",  nearness_radius);
+}
+
+void QtRosNode::set_param_smoothing_alpha(float smoothing_alpha)
+{
+    n->setParam("/navigation/path_planning/smoothing_alpha",  smoothing_alpha);
+}
+  
+void QtRosNode::set_param_smoothing_beta(float  smoothing_beta)
+{
+    n->setParam("/navigation/path_planning/smoothing_beta" ,  smoothing_beta);
 }
 
 void QtRosNode::get_robot_pose(float& robot_x, float& robot_y, float& robot_a)
