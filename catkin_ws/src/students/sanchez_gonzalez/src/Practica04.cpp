@@ -16,7 +16,7 @@
 #define METHOD_DIJKSTRA 2
 #define METHOD_ASTAR    3
 
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "SANCHEZ_GONZALEZ"
 
 float smoothing_alpha;
 float smoothing_beta;

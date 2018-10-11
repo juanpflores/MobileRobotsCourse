@@ -26,6 +26,7 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
 	return map;	
     nav_msgs::OccupancyGrid nearnessMap = map;
 
+    int steps = (int) (nearness_radius/nearnessMap.info.resolution); 
     int tamMapa = (steps*2 + 1) * (steps*2 + 1);
     int* distancias = new int[tamMapa];
     int* vecinos = new int[tamMapa];
@@ -36,17 +37,27 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
         
         for(int j = -steps; j <= steps; j++)
         {
-            vecinos[counter] = i*map.info.width + 1;
-            distancias[count] = (steps - std::max(std::abs(i), std::abs(j)) - 1);
+            vecinos[counter] = i*map.info.width + j;
+            distancias[counter] = (steps - std::max(std::abs(i), std::abs(j)) - 1);
+            counter++;
         }
     }
 
     
     for(int i = 0; i < map.data.size(); i++)
     {
-        /* code */
+        if (map.data[i] > 40) {
+            for(int j = 0; j < tamMapa; j++)
+            {       
+                if (nearnessMap.data[i+vecinos[j]] < distancias[j]) {
+                    nearnessMap.data[i+vecinos[j]] = distancias[j];
+                }
+            }
+        }
     }
     
+    delete[] distancias;
+    delete[] vecinos;
     
     /* TODO:
      * Implement the algorithm to get the nearness map. For example, if the map is: ('x' indicates an occupied cell)
@@ -83,14 +94,16 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
             float xn_i = newPath.poses[i].pose.position.x;
             float yn_i = newPath.poses[i].pose.position.y;
             float xn_ip = newPath.poses[i-1].pose.position.x;
-            float yn_ip = nePath.poses[i-1].pose.position.y;
+            float yn_ip = newPath.poses[i-1].pose.position.y;
             float xn_in = newPath.poses[i+1].pose.position.x;
             float yn_in = newPath.poses[i+1].pose.position.y;
             float grad_x = beta*(xn_i - xo_i) + alpha*(2*xn_i - xn_ip - xn_in);
             float grad_y = beta*(yn_i - yo_i) + alpha*(2*yn_i - yn_ip - yn_in);
             
-            newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delat * grand_x;
-            newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delat * grand_y;
+            newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delta * grad_x;
+            newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delta * grad_y;
+
+            grad_mag += fabs(grad_x) + fabs(grad_y);
 
         }
         
