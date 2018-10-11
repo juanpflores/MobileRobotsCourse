@@ -195,7 +195,7 @@ bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, f
 			//If the distance from the current node is less than the previously found distance, then change it,
 			//and set the current node as parent of this neighbor.
 			Node* neighbor = &nodes[node_neighbors[i]];
-			int dist = current_node->distance + 1;
+			int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
 			if(dist < neighbor->distance)
 			{
 				neighbor->distance = dist;
@@ -320,7 +320,7 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
 	    //If the distance from the current node is less than the previously found distance, then change it,
 	    //and set the current node as parent of this neighbor.
 	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1;
+	    int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
 	    if(dist < neighbor->distance)
 	    {
 		neighbor->distance = dist;
@@ -443,7 +443,7 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
 			//If the distance from the current node is less than the previously found distance, then change it,
 			//and set the current node as parent of this neighbor.
 			Node* neighbor = &nodes[node_neighbors[i]];
-			int dist = current_node->distance + 1;
+			int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
 			// Calculation of Manhattan Distance
 			int	delta_x  = abs(idx_goal % map.info.width - neighbor->index % map.info.width);
 			int	delta_y  = abs(idx_goal / map.info.width - neighbor->index / map.info.width);
