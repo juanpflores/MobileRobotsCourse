@@ -349,7 +349,7 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
             //If the distance from the current node is less than the previously found distance, then change it,
             //and set the current node as parent of this neighbor.
             Node* neighbor = &nodes[node_neighbors[i]];
-            int dist = current_node->distance + 1;
+            int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
             if(dist < neighbor->distance)
             {
             neighbor->distance = dist;
@@ -479,15 +479,15 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
             //If the distance from the current node is less than the previously found distance, then change it,
             //and set the current node as parent of this neighbor.
             Node* neighbor = &nodes[node_neighbors[i]];
-            int dist = current_node->distance + 1;
+            int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
             if(dist < neighbor->distance)
             {
             neighbor->distance = dist;
             /*se agrega la heuristica que es la suma de la distancia del current_node y la distancia de Manhathan 
                 del indice meta menos el indice del nodo actual*/
             neighbor->f_value = dist 
-                                     + abs(idx_goal % map.info.width - current_node->index % map.info.width)
-                                     + abs(idx_goal / map.info.width - current_node->index / map.info.width);
+                                     + abs(idx_goal % map.info.width - neighbor->index % map.info.width)
+                                     + abs(idx_goal / map.info.width - neighbor->index / map.info.width);
 
             neighbor->parent   = current_node;
             }
