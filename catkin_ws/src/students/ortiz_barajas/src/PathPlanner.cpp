@@ -338,7 +338,7 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
 	    //If the distance from the current node is less than the previously found distance, then change it,
 	    //and set the current node as parent of this neighbor.
 	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1;
+	    int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
 	    if(dist < neighbor->distance)
 	    {
 		neighbor->distance = dist;
@@ -396,6 +396,8 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
     float manhattan_distance;
     float neighbor_x;
     float neighbor_y;
+    float neighbor_idx;
+    float neighbor_idy;
 
     /*
      * Variables:
@@ -469,17 +471,21 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
 	    //If the distance from the current node is less than the previously found distance, then change it,
 	    //and set the current node as parent of this neighbor.
 	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1;
+	    //Calculating F value
+	    //neighbor_x = (neighbor->index % map.info.width)*(map.info.resolution) + map.info.origin.position.x;
+	    //neighbor_y = (neighbor->index % map.info.width)*(map.info.resolution) + map.info.origin.position.y;
+	    neighbor_idx = idx_goal % map.info.width - neighbor->index % map.info.width;
+	    neighbor_idy = idx_goal / map.info.width - neighbor->index / map.info.width;  
+	    manhattan_distance = abs(neighbor_idx) + abs(neighbor_idx);
+
+	    int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
 	    if(dist < neighbor->distance)
 	    {
 		neighbor->distance = dist;
 		neighbor->parent   = current_node;
+		neighbor->f_value = neighbor->distance + manhattan_distance;
 	    }
-	    //Calculating F value
-	    neighbor_x = (neighbor->index % map.info.width)*(map.info.resolution) + map.info.origin.position.x;
-	    neighbor_y = (neighbor->index % map.info.width)*(map.info.resolution) + map.info.origin.position.y;
-	    manhattan_distance = abs(neighbor_x - goal_x) + abs(neighbor_y - goal_y);
-	    neighbor->f_value = neighbor->distance + manhattan_distance;
+
 
 	    //If it is not in the open list, add it.
 	    if(!neighbor->in_open_list)
