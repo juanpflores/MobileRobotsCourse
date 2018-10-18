@@ -83,9 +83,9 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 
     //Se coloca esta condición porque queremos que se calcule dentro del rango de puntos, además de que se coloca un limite de interaciones 
     
-    while(epsi >= tolerancia && --intentos>0) 
+    while(epsi_i >= tolerancia && --intentos>0) 
       {
-       
+	epsi_i=0;
 	    //Para calcular los primeros puntos de la función del gradiente        
 	    float xo_o = path.poses[0].pose.position.x;
 	    float yo_o = path.poses[0].pose.position.y ;	    
@@ -95,7 +95,11 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 	    float y1_n = newPath.poses[1].pose.position.y;
 	    float grad_x0=delta*(alpha*(xo_n-x1_n)+beta*(xo_n-xo_o));
 	    float grad_y0=delta*(alpha*(yo_n-y1_n)+beta*(yo_n-yo_o));
+	    newPath.poses[0].pose.position.x =newPath.poses[0].pose.position.x- grad_x0;
+	    newPath.poses[0].pose.position.y =newPath.poses[0].pose.position.y -grad_y0;
+				
 	    float epsi_0=fabs(grad_x0) + fabs(grad_y0);
+	    
 
 	    //Para calcular los puntos que van desde 1 hasta k                 
 	    for(int i=1; i< path.poses.size() -1; i++)
@@ -128,6 +132,8 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 	    float grad_yk=delta*(alpha*(yk_n-yk1_n)+beta*(yk_n-yk_o));
 	    float epsi_k=fabs(grad_xk) + fabs(grad_yk);
 
+	    newPath.poses[ path.poses.size()].pose.position.x =newPath.poses[ path.poses.size()].pose.position.x- grad_xk;
+	    newPath.poses[ path.poses.size()].pose.position.y =newPath.poses[ path.poses.size()].pose.position.y -grad_yk;
 	    epsi=epsi_0+epsi_i+epsi_k;
 
       }
