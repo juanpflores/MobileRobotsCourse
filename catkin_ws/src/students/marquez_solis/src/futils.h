@@ -4,7 +4,23 @@
 #include <iostream>
 #include <functional>
 #include <array>
-
+#include <cmath>
+constexpr double PI = 3.1415926535897932384626433832795028841971;
+inline double norm_angle (double angle){
+    double trunc = fmod(angle,2*PI);
+    if (trunc > PI) return -2*PI + trunc;
+    else if (trunc < -PI) return 2*PI + trunc;
+    else return trunc;
+}
+inline double raised_cosine_norm(double arg){
+    return std::abs(arg) < 1 ? 0.5 + 0.5*cos(arg*PI) : 0; 
+}
+inline double single_sine_norm(double arg){
+    if (arg < -1) return -1;
+    if (arg > 1) return 1;
+    auto a = sin(arg*PI/2);
+    return a*a*a;
+}
 
 using namespace std::placeholders;
 
