@@ -128,15 +128,14 @@ int main(int argc, char** argv)
 		v = vMax * ( exp(-pow(error_a,2)/10) );
 		msg_cmd_vel.angular.z = w;
 		//Componentes X y Y de la velocidad lineal
-		msg_cmd_vel.linear.x = v*cos(error_a);
-		msg_cmd_vel.linear.y = v*sin(error_a);
+		msg_cmd_vel.linear.x = v;
+		msg_cmd_vel.linear.y = 0;
 		//Distancia euclidiana para determinar la condición de paro
 		distance = sqrt( (pow(error_y,2) - pow(error_x,2)) );
 		
 		//Si el robot está a menos de 0.1 de distancia del punto meta, se detiene		
 		if(distance<0.1){
 			msg_cmd_vel.linear.x = 0;
-			msg_cmd_vel.angular.z = 0;
 			msg_cmd_vel.angular.z = 0;
 		}
 	}
