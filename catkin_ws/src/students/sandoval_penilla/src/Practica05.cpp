@@ -30,8 +30,8 @@ ros::ServiceClient clt_plan_path;
 
 geometry_msgs::Twist velocidad_diff(float goal_x,float goal_y){
     // Empleando el codigo de la practica 02 para el robot diferencial
-    float alpha = 0.5;
-    float beta  = 0.12;
+    float alpha = 0.3;
+    float beta  = 0.05;
     float vMax  = 0.5;
     float wMax  = 0.5;
     geometry_msgs::Twist msg_cmd_vel;
@@ -51,16 +51,13 @@ geometry_msgs::Twist velocidad_diff(float goal_x,float goal_y){
 
 void siguiente_punto(tf::TransformListener& tfListener,float& goal_x,float& goal_y, int& punto_indice ){
     float err = 0  ;
-    if(punto_indice >= global_plan.poses.size()) punto_indice = global_plan.poses.size()-1;
-    
-    do{
+    // Obtenemos el siguiente punto de la ruta si es que el robot ya llego el punto loc
+    for(punto_indice; punto_indice < global_plan.poses.size(); punto_indice++ ){
         goal_x = global_plan.poses[punto_indice].pose.position.x;
         goal_y = global_plan.poses[punto_indice].pose.position.y;
         err = sqrt((goal_x-robot_x)*(goal_x-robot_x)+(goal_y-robot_y)*(goal_y-robot_y));
-
-
-    }while(err < 0.25 && ++punto_indice < global_plan.poses.size());
-
+        if(err > 0.15) break;
+    }
 }
 
 void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
@@ -82,14 +79,6 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
     clt_plan_path.call(srv);
     global_plan = srv.response.plan;
     new_path = true;
-}
-
-
-
-
-
-float distancia(){
-    return sqrt((global_goal_x - robot_x)*(global_goal_x-robot_x)+(global_goal_y-robot_y)*(global_goal_y-robot_y));
 }
 
 
@@ -143,18 +132,18 @@ int main(int argc, char** argv)
         meta = true;
     }
     if(meta){
-        std::cout << "meta"<< std::endl;
+        std::cout << "--------------"<< std::endl;
         float coord_x;
         float coord_y;
         siguiente_punto(tl,coord_x, coord_y, punto_indice);
         float dist_to_goal = sqrt((global_goal_x - robot_x)*(global_goal_x-robot_x)+(global_goal_y-robot_y)*(global_goal_y-robot_y));
         msg_cmd_vel = velocidad_diff(coord_x,coord_y);
-        std::cout << "x - " << msg_cmd_vel.linear.x << std::endl;
+        std::cout << "linear  x - " << msg_cmd_vel.linear.x << std::endl;
+        std::cout << "angular w - " << msg_cmd_vel.angular.z << std::endl;
         pub_cmd_vel.publish(msg_cmd_vel);
         if(dist_to_goal <= 0.25 || new_path) meta = false;
     }
 
-	//pub_cmd_vel.publish(msg_cmd_vel);
 	ros::spinOnce();
 	loop.sleep();
     }
