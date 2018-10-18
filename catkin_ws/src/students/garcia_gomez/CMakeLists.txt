@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(garcia_gomez)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+# add_compile_options(-std=c++14)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -110,7 +110,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES garcia_gomez
+#  LIBRARIES jimenez_jimenez
 #  CATKIN_DEPENDS geometry_msgs hardware_msgs nav_msgs roscpp rospy sensor_msgs std_msgs tf visualization_msgs
 #  DEPENDS system_lib
 )
@@ -128,19 +128,21 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/garcia_gomez.cpp
+#   src/${PROJECT_NAME}/jimenez_jimenez.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-#add_dependencies(practica3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-##add_executable(practica3 src/Practica03.cpp src/PathPlanner.cpp)#cambiar el nopmbre el ejecutable y archivo, es decir la practica 
-add_executable(practica04 src/Practica04.cpp src/PathPlanner.cpp src/PathSmoother.cpp)
+##add_executable(p1_node src/p1_node.cpp)
+##add_executable(practica_02 src/Practica02.cpp)
+##add_executable(practica03 src/Practica03.cpp src/PathPlanner.cpp)
+add_executable(practica05 src/Practica05.cpp src/PathPlanner.cpp src/PathSmoother.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,11 +152,28 @@ add_executable(practica04 src/Practica04.cpp src/PathPlanner.cpp src/PathSmoothe
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-##add_dependencies(practica3 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(practica04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+##add_dependencies(p1_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+##add_dependencies(practica_02 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+##add_dependencies(practica03 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+##add_dependencies(practica04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
- target_link_libraries(practica04
+##target_link_libraries(p1_node
+##   ${catkin_LIBRARIES}
+##   )
+##target_link_libraries(practica_02
+##   ${catkin_LIBRARIES}
+## )
+##target_link_libraries(practica03
+##   ${catkin_LIBRARIES}
+## )
+##target_link_libraries(practica04
+##   ${catkin_LIBRARIES}
+##)
+
+target_link_libraries(practica05
    ${catkin_LIBRARIES}
  )
 
@@ -198,7 +217,7 @@ add_dependencies(practica04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTE
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_garcia_gomez.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_jimenez_jimenez.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
