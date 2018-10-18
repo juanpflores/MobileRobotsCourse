@@ -53,6 +53,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
+    float goal_x, goal_y, error_a, error_x, error_y, goal_a, v_x, v_y, w, v_max = 1.0, w_max = 1.0;
     std::cout << "PRÁCTICA 05 - SEGUIMIENTO DE RUTAS - " << NOMBRE << std::endl;
     ros::init(argc, argv, "practica_05");
     ros::NodeHandle n("~");
@@ -86,7 +87,6 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
-	float goal_x, goal_y, error_a, error_x, error_y, goal_a, v_x, v_y, w, v_max = 1.0, w_max = 1.0;
 	
 	//Se busca el punto que tiene una distancia mayor a 0.2 para tomar como nodo meta
         while(i < global_plan.poses.size()){
