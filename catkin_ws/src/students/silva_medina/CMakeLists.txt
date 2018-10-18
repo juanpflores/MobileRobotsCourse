@@ -144,7 +144,7 @@ include_directories(
 #add_executable(p01 src/p01.cpp)
 add_executable(Practica02 src/Practica_02.cpp)
 add_executable(Practica04 src/Practica04.cpp src/PathPlanner.cpp src/PathSmoother.cpp)
-add_executable(Practica05 src/Practica05.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
+add_executable(Practica05 src/Practica05.cpp)
 
 
 ## Rename C++ executable without prefix
