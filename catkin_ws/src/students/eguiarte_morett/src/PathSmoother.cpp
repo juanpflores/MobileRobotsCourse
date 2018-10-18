@@ -82,10 +82,11 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
     
     while (grad_mag >= tolerance && --attempts > 0){
         grad_mag = 0;
-        float grad_x = alpha*(newPath.poses[0].pose.position.x - newPath.poses[1].pose.position.x) + beta*(newPath.poses[0].pose.position.x - path.poses[0].pose.position.x);
-        float grad_y = alpha*(newPath.poses[0].pose.position.y - newPath.poses[1].pose.position.y) + beta*(newPath.poses[0].pose.position.y - path.poses[0].pose.position.y);
-        newPath.poses[0].pose.position.x = newPath.poses[0].pose.position.x - delta*grad_x;
-        newPath.poses[0].pose.position.y = newPath.poses[0].pose.position.y - delta*grad_y;
+        //Se comentan los cálculos de los indices cero y último puesto que de otra forma se queda oscilando
+        float grad_x; //= alpha*(newPath.poses[0].pose.position.x - newPath.poses[1].pose.position.x) + beta*(newPath.poses[0].pose.position.x - path.poses[0].pose.position.x);
+        float grad_y; //= alpha*(newPath.poses[0].pose.position.y - newPath.poses[1].pose.position.y) + beta*(newPath.poses[0].pose.position.y - path.poses[0].pose.position.y);
+        //newPath.poses[0].pose.position.x = newPath.poses[0].pose.position.x - delta*grad_x;
+        //newPath.poses[0].pose.position.y = newPath.poses[0].pose.position.y - delta*grad_y;
         grad_mag += fabs(grad_x) + fabs(grad_y);
         for(int i = 1; i < path.poses.size() - 1; i++){
             grad_x = alpha*(2*newPath.poses[i].pose.position.x - newPath.poses[i-1].pose.position.x - newPath.poses[i+1].pose.position.x) + beta*(newPath.poses[i].pose.position.x - path.poses[i].pose.position.x);
@@ -95,11 +96,11 @@ nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float
 
             grad_mag += fabs(grad_x) + fabs(grad_y);
         }
-        grad_x = alpha*(newPath.poses[path.poses.size()-1].pose.position.x - newPath.poses[path.poses.size()-2].pose.position.x) + beta*(newPath.poses[path.poses.size()-1].pose.position.x - path.poses[path.poses.size()-1].pose.position.x);
-        grad_y = alpha*(newPath.poses[path.poses.size()-1].pose.position.y - newPath.poses[path.poses.size()-2].pose.position.y) + beta*(newPath.poses[path.poses.size()-1].pose.position.y - path.poses[path.poses.size()-1].pose.position.y);
-        newPath.poses[path.poses.size()-1].pose.position.x = newPath.poses[path.poses.size()-1].pose.position.x - delta*grad_x;
-        newPath.poses[path.poses.size()-1].pose.position.y = newPath.poses[path.poses.size()-1].pose.position.y - delta*grad_y;
-        grad_mag += fabs(grad_x) + fabs(grad_y);
+        //grad_x = alpha*(newPath.poses[path.poses.size()-1].pose.position.x - newPath.poses[path.poses.size()-2].pose.position.x) + beta*(newPath.poses[path.poses.size()-1].pose.position.x - path.poses[path.poses.size()-1].pose.position.x);
+        //grad_y = alpha*(newPath.poses[path.poses.size()-1].pose.position.y - newPath.poses[path.poses.size()-2].pose.position.y) + beta*(newPath.poses[path.poses.size()-1].pose.position.y - path.poses[path.poses.size()-1].pose.position.y);
+        //newPath.poses[path.poses.size()-1].pose.position.x = newPath.poses[path.poses.size()-1].pose.position.x - delta*grad_x;
+        //newPath.poses[path.poses.size()-1].pose.position.y = newPath.poses[path.poses.size()-1].pose.position.y - delta*grad_y;
+        //grad_mag += fabs(grad_x) + fabs(grad_y);
     }
     
     return newPath;
