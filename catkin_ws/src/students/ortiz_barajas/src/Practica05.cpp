@@ -10,30 +10,33 @@
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/GetPlan.h"
 #include "tf/transform_listener.h"
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
-# define PI           3.14159265358979323846 //Definición de PI para ajuste del angulo del robot diferencial
+#define NOMBRE "ORTIZ_BARAJAS"
+# define PI 3.14159265358979323846 //Definición de PI para ajuste del angulo del robot diferencial
 
 /*
  * Variables to store the current robot position and the global goal position.
  */
 float global_goal_x;
 float global_goal_y;
-float local_goal_x;
-float local_goal_y;
 float robot_x;
 float robot_y;
 float robot_a;
-int i;
-
-//Variables extra para el control de posicion
+/*
+ * Variables for the position control with differential base
+ */
+float local_goal_x;
+float local_goal_y;
 float error_x;
 float error_y;
+float global_error_x;
+float global_error_y;
 float error_a;
 float vMax = 0.5;
 float wMax = 0.5;
 float w;
 float v;
 float distance;
+float i;
 /*
  * global_plan: stores the path to be tracked.
  * cltPlanPath: service client used to call the service for calculating a path. 
@@ -60,9 +63,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
     srv.request.goal.pose.position.y  = global_goal_y;
     clt_plan_path.call(srv);
     global_plan = srv.response.plan;
-    i = 0;
-    local_goal_x = 0;
-    local_goal_y = 0;
+    i = 1;
 }
 
 int main(int argc, char** argv)
@@ -100,32 +101,41 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
-	while(local_goal_x!= global_goal_x && local_goal_y!=global_goal_y){
-		local_goal_x = global_plan.poses[i].pose.position.x;
-		local_goal_y = global_plan.poses[i].pose.position.y;
+		
+	 if(global_plan.poses.size() != NULL && i < global_plan.poses.size()){
+		local_goal_x =global_plan.poses[i].pose.position.x;
+		local_goal_y =global_plan.poses[i].pose.position.y;
+		
 		error_x = local_goal_x - robot_x;
-		error_y = local_goal_y - robot_y;
+	 	error_y = local_goal_y - robot_y;
 		error_a = atan2(error_y,error_x) - robot_a;
-		if(error_a < (-PI) ){
-			error_a = error_a + (2*PI);
-		}
-		if(error_a > (PI) ){
-			error_a = error_a - (2*PI);
-		}				
-		w = wMax * ( (2 / (1+ exp(-error_a/1)) ) -1);
-		v = vMax * ( exp(-pow(error_a,2)/10) );
-		msg_cmd_vel.angular.z = w;
-		msg_cmd_vel.linear.x = v;
-		msg_cmd_vel.linear.y = 0;
-		pub_cmd_vel.publish(msg_cmd_vel);
-		distance = sqrt( (pow(error_y,2) - pow(error_x,2)) );
-		if(distance < 0.05){
+	 	if(error_a < -PI){
+			error_a += 2*PI;
+	 	}
+	 	if(error_a > PI){
+			error_a -= 2*PI;
+	 	}				
+	 	w = wMax * ( (2 / (1+ exp(-error_a/1)) ) -1);
+	 	v = vMax * ( exp(-pow(error_a,2)/0.5) );
+	 	msg_cmd_vel.angular.z = w;
+	 	msg_cmd_vel.linear.x = v;
+	 	msg_cmd_vel.linear.y = 0;
+	 	//Distancia euclidiana para determinar la condición de paro
+	 	distance = sqrt( (pow(error_y,2) - pow(error_x,2)) );
+	 	//Si el robot está a menos de 0.1 de distancia del punto meta, se detiene		
+	 	if(distance<0.1){
+			//msg_cmd_vel.linear.x = 0;
+			//msg_cmd_vel.angular.z = 0;
 			i++;
-		}
+	 	}
+	}else{
+		msg_cmd_vel.angular.z = 0;
+	 	msg_cmd_vel.linear.x = 0;
+	 	msg_cmd_vel.linear.y = 0;		
 	}
-	msg_cmd_vel.angular.z = 0;
-	msg_cmd_vel.angular.x = 0;
-
+	 //error_x = global_goal_x - robot_x;
+	 //error_y = global_goal_y - robot_y;
+	 
 	pub_cmd_vel.publish(msg_cmd_vel);
 	ros::spinOnce();
 	loop.sleep();
