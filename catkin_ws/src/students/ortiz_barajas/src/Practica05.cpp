@@ -101,11 +101,12 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
-		
+	//Determina si se ha recibido la ruta y si la variable i no es mayor al tamaño de la ruta	
 	 if(global_plan.poses.size() != NULL && i < global_plan.poses.size()){
+		//Asignamos a el punto meta local a alcanzar
 		local_goal_x =global_plan.poses[i].pose.position.x;
 		local_goal_y =global_plan.poses[i].pose.position.y;
-		
+		//Control diferencial
 		error_x = local_goal_x - robot_x;
 	 	error_y = local_goal_y - robot_y;
 		error_a = atan2(error_y,error_x) - robot_a;
@@ -120,21 +121,18 @@ int main(int argc, char** argv)
 	 	msg_cmd_vel.angular.z = w;
 	 	msg_cmd_vel.linear.x = v;
 	 	msg_cmd_vel.linear.y = 0;
-	 	//Distancia euclidiana para determinar la condición de paro
+	 	//Distancia euclidiana para determinar si se debe pasar al siguiente punto meta local
 	 	distance = sqrt( (pow(error_y,2) - pow(error_x,2)) );
-	 	//Si el robot está a menos de 0.1 de distancia del punto meta, se detiene		
+	 	//Si el robot está a menos de 0.1 de distancia del punto meta local, incrementa i para acceder al siguiente elemento		
 	 	if(distance<0.1){
-			//msg_cmd_vel.linear.x = 0;
-			//msg_cmd_vel.angular.z = 0;
 			i++;
 	 	}
 	}else{
+		//Si ha recorrido todos los puntos de la ruta, se detiene
 		msg_cmd_vel.angular.z = 0;
 	 	msg_cmd_vel.linear.x = 0;
 	 	msg_cmd_vel.linear.y = 0;		
 	}
-	 //error_x = global_goal_x - robot_x;
-	 //error_y = global_goal_y - robot_y;
 	 
 	pub_cmd_vel.publish(msg_cmd_vel);
 	ros::spinOnce();
