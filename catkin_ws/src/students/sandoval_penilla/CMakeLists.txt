@@ -140,6 +140,7 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(practica_04 src/Practica04.cpp src/PathPlanner.cpp src/PathPlanner.h src/PathSmoother.cpp src/PathSmoother.h)
 add_executable(practica_05 src/Practica05.cpp)
+add_executable(practica_06 src/Practica06.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -150,12 +151,16 @@ add_executable(practica_05 src/Practica05.cpp)
 ## same as for the library above
 add_dependencies(practica_04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(practica_04
    ${catkin_LIBRARIES}
  )
  target_link_libraries(practica_05
+   ${catkin_LIBRARIES}
+ )
+ target_link_libraries(practica_06
    ${catkin_LIBRARIES}
  )
 
