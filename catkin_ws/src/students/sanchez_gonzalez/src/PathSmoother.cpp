@@ -25,8 +25,7 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
     if(nearness_radius <= 0)
 	return map;	
     nav_msgs::OccupancyGrid nearnessMap = map;
-    
-    /* TODO:
+    /* 
      * Implement the algorithm to get the nearness map. For example, if the map is: ('x' indicates an occupied cell)
       0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 3 3 3 3 3 2 1 0 1 1 1 1 1
       0 0 x x x 0 0 0 0 0 0 0 0 0                           2 3 x x x 3 2 1 0 1 2 2 2 2
@@ -36,107 +35,105 @@ nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& ma
       0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 2 2 2 2 2 1 0 0 1 2 3 3 3
       Max nearness value will depend on the distance of influence (nearness radius)
     */
-     
-     int steps = (int)(nearness_radius / map.info.resolution);
-     int boxsize = (steps*2 +1) * (steps*2+1);
-     int* distances = new int[boxsize];
-     int* neighbors = new int[boxsize];
-     int counter = 0;
-
-     for(int i=-steps; i<=steps; i++){
-     	for (int j = -steps; j <= steps; j++){
+    int step = (int) (nearness_radius/map.info.resolution);
+    int boxsize = (step*2 + 1) * (step*2 + 1);
+    std::vector<int> distances;
+    std::vector<int> neighbors;
+    distances.resize(boxsize); 
+    neighbors.resize(boxsize); 
+    int counter =  0;
+   for(int i = -step; i<=step; i++) //Se calcula el valor que se asiganará a la celda dependiendo de su posición
+        for (int j = -step; j <= step; j++){
             neighbors[counter] = i*map.info.width + j;
-            distances[counter] = (steps - std::max(std::abs(i), std::abs(j)) + 1);
+            distances[counter] = (step - std::max(std::abs(i), std::abs(j)) - 1);
             counter++;
-	} 
-     }
-
-    for(int i=0; i<map.data.size(); i++){
-    	if(map.data[i] > 40){
-		for(int j=0; j<boxsize; j++){
-			if(nearnessMap.data[i + neighbors[j]] < distances[j]){
-				nearnessMap.data[i + neighbors[j]] = distances[j];
-			}
-		}
-	}
-    }
-    
-    delete[] distances;
-    delete[] neighbors; 
+        }
+    for(int i = 0; i < map.data.size(); i++){
+        if(map.data[i] > 40)
+            for(int j = 0; j < boxsize; j++)
+                if(nearnessMap.data[i + neighbors[j]] < distances[j])
+                    nearnessMap.data[i + neighbors[j]] = distances[j];
+    } // Si hay celdas con valores menores entre los vecinos y distancias, se intercambian
     return nearnessMap;
 }
 
 nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float beta)
 {
-    nav_msgs::Path newPath = path;    
-    if(path.poses.size() < 3)
-        return newPath;
-
-    /* TODO:
+    /* 
      * Implement the algorithm to smooth a path by the gradient descend method.
+     * The gradient is the derivative of the cost function as defined in class
+     * we want to get to the global minimum of this function (the fact that it is
+     * quadratic assures this happens)
+     * the basic algorithm is:
+     * while (|grad(U)| > tolerance){
+     *      q <-- q - delta*grad(U)
+     * }
      * Parameters alpha and beta are set using the GUI
      * You must find the appropriate values for the rest of parameters.
      */
+    nav_msgs::Path newPath = path;    
+    if(path.poses.size() < 3)
+        return newPath;
+    float tol =  0.00001 * path.poses.size(); // Valor de tolerancia
+    int pasos = 10000; // Límite de pasos
+    float grad_v = tol + 1; // VAlor inicial del gradiente
+    float delta  =  0.45; // Delta estimada
+    
+	while (grad_v >= tol && --pasos > 0){
+        	grad_v = 0;
+		// Cálculo de los puntos iniciales
+		float xn0 = newPath.poses[0].pose.position.x;
+	        float yn0 = newPath.poses[0].pose.position.y;
+       		float xn1 = newPath.poses[1].pose.position.x;
+        	float yn1 = newPath.poses[1].pose.position.y;
+        	float x00 = path.poses[0].pose.position.x;
+        	float y00 = path.poses[0].pose.position.x;
+        	float grad_x = alpha*(xn0 - xn1) + beta*(xn0 - x00);
+		float grad_y = alpha*(yn0 - yn1) + beta*(yn0 - y00);
 
-     float tolerance = 0.00001 * path.poses.size();
-     float attempts = 10000;
-     float grad_mag = tolerance + 1;
-     float delta = 0.5;
-   
-     while(grad_mag>= tolerance && --attempts > 0){
-	std::cout << "Attempts remaining: "<<attempts << std::endl;
-	grad_mag = 0;
-	float xn_0 = newPath.poses[0].pose.position.x;
-	float yn_0 = newPath.poses[0].pose.position.y;
-	float xn_1 = newPath.poses[1].pose.position.x;
-	float yn_1 = newPath.poses[1].pose.position.y;
-	float xo_0 = path.poses[0].pose.position.x;
-	float yo_0 = path.poses[0].pose.position.x;
+	    // Posicion inicial de la nueva ruta
+        newPath.poses[0].pose.position.x = xn0 - delta*grad_x;
+        newPath.poses[0].pose.position.y = yn0 - delta*grad_y;
 
-	float grad_x = alpha*(xn_0 - xn_1) + beta*(xn_0 - xo_0);
-        float grad_y = alpha*(yn_0 - yn_1) + beta*(yn_0 - yo_0);
+        // Acomulado del gradiente
+        grad_v += fabs(grad_x) + fabs(grad_y);
 	
-	xn_0 = xn_0 - delta*(grad_x);
-	yn_0 = yn_0 - delta*(grad_y);
-	newPath.poses[0].pose.position.x = xn_0;
-	newPath.poses[0].pose.position.y = yn_0;
-	
-	grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
-	
-	for(int i=1; i<path.poses.size() -1; i++){
-		float xo_i   = path.poses[i].pose.position.x;
-        	float yo_i   = path.poses[i].pose.position.y;
-        	float xn_i   = newPath.poses[i].pose.position.x;
-        	float yn_i   = newPath.poses[i].pose.position.y;
-        	float xn_ip  = newPath.poses[i-1].pose.position.x;
-        	float yn_ip  = newPath.poses[i-1].pose.position.y;
-        	float xn_in  = newPath.poses[i+1].pose.position.x;
-        	float yn_in  = newPath.poses[i+1].pose.position.y;
-        	grad_x = beta*(xn_i - xo_i) + alpha*(2*xn_i - xn_ip -xn_in);
-        	grad_y = beta*(yn_i - yo_i) + alpha*(2*yn_i - yn_ip -yn_in);
-	
-        	newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delta*(grad_x);
-		newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delta*(grad_y);
-		
-		grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
+	    for(int i = 1; i < path.poses.size() - 1; i++){
+            // Càlculo de los puntos  [1 - k-1]
+            float x0i  = path.poses[i].pose.position.x;
+            float y0i  = path.poses[i].pose.position.y;
+            float xni  = newPath.poses[i].pose.position.x;
+            float yni  = newPath.poses[i].pose.position.y;
+            float xnil = newPath.poses[i-1].pose.position.x;
+            float ynil = newPath.poses[i-1].pose.position.y;
+            float xnip = newPath.poses[i+1].pose.position.x;
+            float ynip = newPath.poses[i+1].pose.position.y;
+
+            grad_x = alpha*(2*xni - xnil - xnip) + beta*(xni - x0i);
+            grad_y = alpha*(2*yni - ynil - ynip) + beta*(yni - y0i);
+         
+            // Se agrega posicion i-esima de la nueva ruta
+            newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delta*grad_x;
+            newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delta*grad_y;
+
+            // Acomulado del gradiente 
+            grad_v += fabs(grad_x) + fabs(grad_y);
+        }
+
+        // Cálculo de los últimos valores
+        grad_x = alpha*(newPath.poses[path.poses.size()-1].pose.position.x - newPath.poses[path.poses.size()-2].pose.position.x) 
+                 + beta*(newPath.poses[path.poses.size()-1].pose.position.x - path.poses[path.poses.size()-1].pose.position.x);
+
+        grad_y = alpha*(newPath.poses[path.poses.size()-1].pose.position.y - newPath.poses[path.poses.size()-2].pose.position.y)
+                 + beta*(newPath.poses[path.poses.size()-1].pose.position.y - path.poses[path.poses.size()-1].pose.position.y);
+        
+        //Se agrega posicion k de la nueva ruta
+        newPath.poses[path.poses.size()].pose.position.x = newPath.poses[path.poses.size()-1].pose.position.x - delta*grad_x;
+        newPath.poses[path.poses.size()].pose.position.y = newPath.poses[path.poses.size()-1].pose.position.y - delta*grad_y;
+       
+        // Acomulado del gradiente mediate X y Y
+	    grad_v += fabs(grad_x) + fabs(grad_y);
 	}
-
-	float xn_k  = newPath.poses[path.poses.size()].pose.position.x;
-	float yn_k  = newPath.poses[path.poses.size()].pose.position.y;
-	float xn_kp = newPath.poses[path.poses.size()-1].pose.position.x;
-	float yn_kp = newPath.poses[path.poses.size()-1].pose.position.y;
-	float xo_k  = path.poses[path.poses.size()].pose.position.x;
-	float yo_k  = path.poses[path.poses.size()].pose.position.x;
-
-	grad_x = alpha*(xn_k - xn_kp) + beta*(xn_k - xo_k);
-        grad_y = alpha*(yn_k - yn_kp) + beta*(yn_k - yo_k);
-	
-	newPath.poses[path.poses.size()].pose.position.x = xn_k - delta*(grad_x);
-	newPath.poses[path.poses.size()].pose.position.y = yn_k - delta*(grad_y);
-	
-	grad_mag += sqrt((grad_x*grad_x)+(grad_y*grad_y));
-
-     }
     
     return newPath;
 }
