@@ -238,8 +238,8 @@ int main(int argc, char** argv)
 	if(isReceived){
 		calculate_attraction_force();
 		calculate_resulting_force();
-		qx_next = robot_x + resulting_x;
-		qy_next = robot_y + resulting_y;
+		qx_next = robot_x + 0.9*resulting_x;
+		qy_next = robot_y + 0.9*resulting_y;
 		error_x = qx_next - robot_x;
 		error_y = qy_next - robot_y;
 		error_a = atan2(error_y,error_x) - robot_a;
