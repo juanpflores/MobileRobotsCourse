@@ -220,9 +220,9 @@ int main(int argc, char** argv)
      * These are the default parameters. After tuning the potential fields, change
      * this parameters to the ones you found.
      */
-    n.param<float>("k_rej", Krej, 1.0);
-    n.param<float>("k_att", Katt, 1.0);
-    n.param<float>("d0", d0, 1.0);
+    n.param<float>("k_rej", Krej, 1.7);
+    n.param<float>("k_att", Katt, 0.9);
+    n.param<float>("d0", d0, 0.5);
 
     tf::TransformListener tl;
     tf::StampedTransform t;
