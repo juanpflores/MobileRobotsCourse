@@ -53,9 +53,11 @@ float wMax = 0.5;
 float w;
 float v;
 float e_d; //Distance to goal
+
+//Variables to store next point to goal
 float qx_next;
 float qy_next;
-bool isReceived = false;
+bool isReceived = false; //Boolean to know when a goal is received
 
 void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
@@ -240,6 +242,8 @@ int main(int argc, char** argv)
 		calculate_resulting_force();
 		qx_next = robot_x + 0.9*resulting_x;
 		qy_next = robot_y + 0.9*resulting_y;
+
+		//Differential base position control
 		error_x = qx_next - robot_x;
 		error_y = qy_next - robot_y;
 		error_a = atan2(error_y,error_x) - robot_a;
@@ -253,15 +257,10 @@ int main(int argc, char** argv)
 		v = vMax * ( exp(-pow(error_a,2)/10) );
 		msg_cmd_vel.linear.x = v;
 		msg_cmd_vel.angular.z = w;
-		std::cout << "goal_x=" << goal_x << "\tgoal_y=" << goal_y << std::endl;
-		std::cout << "attraction_x " << attraction_x << "\tattraction_y= " << attraction_y << std::endl;
-		std::cout << "rejection_x= " << rejection_x << "\trejection_y= " << rejection_y << std::endl;
-		std::cout << "resulting_x= " << resulting_x << "\tresulting_y= " << resulting_y << std::endl;
 		error_x = goal_x - robot_x;
 		error_y = goal_y - robot_y;
 		e_d = sqrt((error_y*error_y) + (error_x*error_x));
-		std::cout << "qx_next= " << qx_next << "\tqy_next= " << qy_next << std::endl;
-		std::cout << "e_d= " << e_d << "\n" << std::endl;
+		//Stop condition
 		if(e_d < tolerance){
 			isReceived = false;
 			msg_cmd_vel.linear.x = 0;
