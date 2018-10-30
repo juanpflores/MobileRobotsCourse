@@ -47,7 +47,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
      */
     goal_x = msg->data[0];
     goal_y = msg->data[1];
-    std::cout << "Practica05.->Global goal point received: X=" << goal_x << "\tY=" << goal_y << std::endl;
+    std::cout << "Practica06.->Global goal point received: X=" << goal_x << "\tY=" << goal_y << std::endl;
     
 }
 
@@ -188,14 +188,14 @@ int main(int argc, char** argv)
      * These are the default parameters. After tunning the potential fields, change
      * this parameters to the ones you found.
      */
-    n.param<float>("k_rej", Krej, 1.0);
+    n.param<float>("k_rej", Krej, 2.3);
     n.param<float>("k_att", Katt, 1.0);
-    n.param<float>("d0", d0, 1.0);
+    n.param<float>("d0", d0, 1.25);
 
     tf::TransformListener tl;
     tf::StampedTransform t;
     tf::Quaternion q;
-    geometry_msgs::Twist msg_cmd_vel;	
+    
 
     while(ros::ok())
     {
@@ -222,6 +222,39 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
+    float dist_meta = sqrt((goal_x-robot_x)*(goal_x-robot_x) + (goal_y-robot_y)*(goal_y-robot_y));
+    float mag_vect_unit = sqrt(resulting_x*resulting_x + resulting_y*resulting_y);
+    resulting_x = resulting_x / mag_vect_unit;
+    resulting_y = resulting_y / mag_vect_unit;
+    float incremento = 0.3;
+    resulting_x *= incremento;
+    resulting_y *= incremento;
+    float next_x = robot_x + resulting_x;
+    float next_y = robot_y + resulting_y;
+
+    // Empleando el codigo de la practica 02 para el robot diferencial
+    float alpha = 0.3;
+    float beta  = 0.05;
+    float vMax  = 0.5;
+    float wMax  = 0.5;
+    geometry_msgs::Twist msg_cmd_vel;
+    float errX  = next_x - robot_x;
+    float errY  = next_y - robot_y;
+    float errA  = atan2(errY,errX) - robot_a;
+    // reducimos el angulo al primero y segundo cuadrante
+    if(errA > M_PI) errA -= 2*M_PI;
+    if(errA < -M_PI) errA += 2*M_PI;
+    
+    // Modificamos la velocidad lineal y angular
+    msg_cmd_vel.linear.x = vMax * exp(-errA*errA/alpha);
+    msg_cmd_vel.linear.y = 0;
+    msg_cmd_vel.angular.z = wMax * (2/(1+exp(-errA/beta))-1);
+
+    if(dist_meta < 0.1){
+        msg_cmd_vel.linear.x  = 0; 
+        msg_cmd_vel.linear.y  = 0;
+        msg_cmd_vel.angular.z = 0;
+    }
 
 	pub_cmd_vel.publish(msg_cmd_vel);
 	pub_markers.publish(get_attraction_arrow());
