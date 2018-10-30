@@ -121,7 +121,6 @@ int main(int argc, char** argv)
           //Se calcula la velocidad lineal en el sistema de referencia absoluto
            //v_x = v_a * cos(robot_a);
            //v_y = v_a * sin(robot_a);
-           
          }
         //Publicamos velocidad lineal y angular del robot
         msg_cmd_vel.linear.x = v_x;

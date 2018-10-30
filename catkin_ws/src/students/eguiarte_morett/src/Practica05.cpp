@@ -67,8 +67,8 @@ int main(int argc, char** argv)
     tf::Quaternion q;
 
     geometry_msgs::Twist msg_cmd_vel;
-    //int i = 0;
-    //std::cout<< goal_x << ", " << goal_y << std::endl;
+
+
     while(ros::ok())
     {
         /*
@@ -80,6 +80,7 @@ int main(int argc, char** argv)
         robot_y = t.getOrigin().y();
         q = t.getRotation();
         robot_a = atan2(q.z(), q.w())*2;
+
         /*
         * TODO:
         * Write the code necessary to follow the path stored in 'global_path'.
