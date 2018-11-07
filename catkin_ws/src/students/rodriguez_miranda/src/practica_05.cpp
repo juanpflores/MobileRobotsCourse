@@ -37,7 +37,6 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
     global_goal_x = msg->data[0];
     global_goal_y = msg->data[1];
     std::cout << "Practica05.->Global goal point received: X=" << global_goal_x << "\tY=" << global_goal_y << std::endl;
-
     std::cout << "Practica05.->Calling service for path planning..." << std::endl;
     
     nav_msgs::GetPlan srv;
@@ -47,6 +46,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
     srv.request.goal.pose.position.y  = global_goal_y;
     clt_plan_path.call(srv);
     global_plan = srv.response.plan;
+    // std::cout << "Global_plan:" <<global_plan.poses.size()<< std::endl;
 }
 
 
@@ -86,15 +86,19 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
        	 */
-      
-	/*int newPathx [] = {global_goal_x};
-        int newPathy [] = {global_goal_y};
-	int limite      = (sizeof(newPathx)/sizeof(newPathx[0]));*/
-
-     	int celdas=100;
-	int num_casilla= (celdas*2+1)*(celdas*2+1);
-	int* distances = new int[num_casilla];
-	int* neighbors = new int[num_casilla];
+	nav_msgs::Path newPath=global_plan;
+	
+	
+	//Haciendo un arreglo para almacenar los valores de global_plan
+	
+	float ruta_x [newPath.poses.size()];
+        float ruta_y [newPath.poses.size()];
+	for(int i=0; i < global_plan.poses.size(); i++)
+	  {
+	    ruta_x[i]=newPath.poses[i].pose.position.x;
+	    ruta_y[i]=newPath.poses[i].pose.position.y;
+	   	    
+	  }
 	
 	//Variables de calculo de velocidad del diferencial
          float alfa=0.5;
@@ -106,43 +110,53 @@ int main(int argc, char** argv)
          float etheta;
          float v;
          float w;
-	 float epsi_i;
-	 
- 
-	 for(int i=0; i<global_goal_x ; i++)
-	   {
-				
-	    ex=global_plan.poses[i].pose.position.x-robot_x;
-	    ey=global_plan.poses[i].pose.position.y-robot_y;
-	    etheta=atan2(ey,ex)-robot_a;
-	 
-            if( etheta<-3.141516)
+	 	 	
+	 for(int i=0; i<global_plan.poses.size() ; i++)
+	   {				
+	    ex=ruta_x[i]-robot_x;
+	    ey=ruta_y[i]-robot_y;
+	
+            //Si el error excede cualquiera de estas condiciones el robot no avanza
+	     if (ex>=0.15 | ey>=0.15 | ex<=-0.15 | ey<=-0.15)
 	      {
-	        etheta+=2*3.141516;
-	      }
+	     
+		
+	       }
 
-	    if (etheta>3.141516)
-	      {
+	    //Si no el robot pouede avanzar al siguiente punto, puesto que la tolerancia es la admitida
+	    else
+	      
+	     {
+	       etheta=atan2(ey,ex)-robot_a;
+	          	 
+               if( etheta<-3.141516)
+	        {
+	          etheta+=2*3.141516;
+	        }
+
+	       if (etheta>3.141516)
+	        {
 	        etheta-=2*3.141516;
-	      }
+	        }
 	    
-           v=vmax*(exp(-etheta*etheta/alfa));
-	   w=wmax*(2/(1+exp(-etheta/beta))-1);
+               v=vmax*(exp(-etheta*etheta/alfa));
+	       w=wmax*(2/(1+exp(-etheta/beta))-1);
 
-	   if(sqrt(ex*ex + ey*ey)>0.1)
-	      {
-	     //Asignando valores a la velocidad
-	       msg_cmd_vel.linear.x=v;
-	       msg_cmd_vel.linear.y=0;
-	       msg_cmd_vel.angular.z=w;
-	      }
-	   else{
-	     msg_cmd_vel.linear.x=0;
-	     msg_cmd_vel.linear.y=0;
-	     msg_cmd_vel.angular.z=0;
+	      if(sqrt(ex*ex + ey*ey)>0.1)
+	       {
+	       //Asignando valores a la velocidad
+	        msg_cmd_vel.linear.x=v;
+	        msg_cmd_vel.linear.y=0;
+	        msg_cmd_vel.angular.z=w;
+	       }
+	      else{
+	        msg_cmd_vel.linear.x=0;
+	        msg_cmd_vel.linear.y=0;
+                msg_cmd_vel.angular.z=0;
+	          }
+	     }
+	  
 	   }
-    	   
-	  }
 	    
 	pub_cmd_vel.publish(msg_cmd_vel);
 	ros::spinOnce();

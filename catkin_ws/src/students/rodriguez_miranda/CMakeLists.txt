@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 2.8.3)
 project(rodriguez_miranda)
 
@@ -144,6 +145,7 @@ include_directories(
  add_executable(practica_03 src/practica_03.cpp src/PathPlanner.cpp)
  add_executable(practica_04 src/practica_04.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
  add_executable(practica_05 src/practica_05.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
+ add_executable(practica_06 src/practica_06.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
  
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -163,12 +165,15 @@ add_dependencies(practica_04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 
 add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 ## Specify libraries to link a library or executable target against
  target_link_libraries(practica_01 ${catkin_LIBRARIES})
  target_link_libraries(practica_02 ${catkin_LIBRARIES})
  target_link_libraries(practica_03 ${catkin_LIBRARIES})
  target_link_libraries(practica_04 ${catkin_LIBRARIES})
  target_link_libraries(practica_05 ${catkin_LIBRARIES})
+ target_link_libraries(practica_06 ${catkin_LIBRARIES})
 #############
 ## Install ##
 #############
