@@ -189,8 +189,8 @@ int main(int argc, char** argv)
      * These are the default parameters. After tunning the potential fields, change
      * this parameters to the ones you found.
      */
-    n.param<float>("k_rej", Krej, 2.0);
-    n.param<float>("k_att", Katt, 2.5);
+    n.param<float>("k_rej", Krej, 3.0);
+    n.param<float>("k_att", Katt, 1.0);
     n.param<float>("d0", d0, 1.0);
 
     tf::TransformListener tl;
@@ -224,25 +224,25 @@ int main(int argc, char** argv)
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
 
-	float uniresulx=resulting_x/(sqrt((resulting_x*resulting_x)+(resulting_y*resulting_y)));
-	float uniresuly=resulting_y/(sqrt((resulting_x*resulting_x)+(resulting_y*resulting_y)));
-	float grad_xi=0.3*uniresulx+robot_x;
-	float grad_yi=0.3*uniresuly+robot_y;
-				 
+        float ruta_x;
+	float ruta_y;
+	float uniresulx;
+	float uniresuly;
+	//Obteniendo el vector unitario
+	 uniresulx=resulting_x/(sqrt((resulting_x*resulting_x)+(resulting_y*resulting_y)));
+	 uniresuly=resulting_y/(sqrt((resulting_x*resulting_x)+(resulting_y*resulting_y)));
+	 //sumandolo a la posicion del robot
+	 ruta_x=0.3*uniresulx+robot_x;
+	 ruta_y=0.3*uniresuly+robot_y;
+	
+	       
         //COntrol diferencial
 	 float alfa=0.5;
 	 float beta=0.5;
  	 float vmax=0.5;
          float wmax=0.5;
-         float ex=grad_xi-robot_x;
-	 float ey=grad_yi-robot_y;
-	 if(ex>=0.1 | ey>=0.1 | ex<= -0.1 | ey<=-0.1)
-	   {
-	     std::cout << "oaaaaa " << std::endl;
-	     
-	   }
-         else
-	   {
+	 float ex=ruta_x-robot_x;
+	 float ey=ruta_y-robot_y;
 	 float etheta=atan2(ey,ex)-robot_a;
 	 float v;
 	 float w;
@@ -271,7 +271,7 @@ int main(int argc, char** argv)
 	  msg_cmd_vel.linear.y=0;
 	  msg_cmd_vel.angular.z=0;
 	    }
-	}	
+	   
     
 	pub_cmd_vel.publish(msg_cmd_vel);
 	pub_markers.publish(get_attraction_arrow());
