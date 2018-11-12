@@ -222,7 +222,7 @@ int main(int argc, char** argv)
      */
     n.param<float>("k_rej", Krej, 1.7);
     n.param<float>("k_att", Katt, 0.9);
-    n.param<float>("d0", d0, 0.5);
+    n.param<float>("d0", d0, 0.7);
 
     tf::TransformListener tl;
     tf::StampedTransform t;
