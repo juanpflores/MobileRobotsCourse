@@ -34,20 +34,21 @@ def move_x(cells, p):
     # Almacenar las nuevas probabilidades en el arreglo 'updated_p'
     # 
     for i in range(len(p)):
-        # Calcula probabilidades de correcto, sobrepaso y retraso
-        cell_if_correct    = i - cells
-        cell_if_undershoot = i - cells + 1
-        cell_if_overshoot  = i - cells - 1
+        for j in range(len(p[i])):
+            # Calcula probabilidades de correcto, sobrepaso y retraso
+            cell_if_correct    = j - cells
+            cell_if_undershoot = j - cells + 1
+            cell_if_overshoot  = j - cells - 1
 
-        # Calcula las probabilidades con base a la de la celda
-        cell_if_correct    %= len(p)
-        cell_if_undershoot %= len(p)
-        cell_if_overshoot  %= len(p)
+            # Calcula las probabilidades con base a la de la celda
+            cell_if_correct    %= len(p[i])
+            cell_if_undershoot %= len(p[i])
+            cell_if_overshoot  %= len(p[i])
 
-        # Actualiza la probabilidad 
-        updated_p[i]  = p[cell_if_undershoot]*pUnder
-        updated_p[i] += p[cell_if_correct]*pCorrect
-        updated_p[i] += p[cell_if_overshoot]*pOver
+            # Actualiza la probabilidad 
+            updated_p[i][j]  = p[i][cell_if_undershoot]*pUnder
+            updated_p[i][j] += p[i][cell_if_correct]*pCorrect
+            updated_p[i][j] += p[i][cell_if_overshoot]*pOver
     return updated_p
 
 def move_y(cells, p):
@@ -67,14 +68,14 @@ def move_y(cells, p):
             cell_if_overshoot  = j - cells - 1
 
             # Calcula las probabilidades con base a la de la celda
-            cell_if_correct    %= len(p[i])
-            cell_if_undershoot %= len(p[i])
-            cell_if_overshoot  %= len(p[i])
+            cell_if_correct    %= len(p)
+            cell_if_undershoot %= len(p)
+            cell_if_overshoot  %= len(p)
 
             # Actualiza la probabilidad 
-            updated_p[i][j]  = p[i][cell_if_undershoot]*pUnder
-            updated_p[i][j] += p[i][cell_if_correct]*pCorrect
-            updated_p[i][j] += p[i][cell_if_overshoot]*pOver
+            updated_p[i][j]  = p[cell_if_undershoot][i]*pUnder
+            updated_p[i][j] += p[cell_if_correct][i]*pCorrect
+            updated_p[i][j] += p[cell_if_overshoot][i]*pOver
     return updated_p
 
 def observe(landmark, p):
@@ -87,7 +88,7 @@ def observe(landmark, p):
     pTotal = 0
     for i in range(len(p)):
         for j in range(len(p[i])):
-            # Si lo que escribas es lo mismo que lo que hay en ese posición en el mapa
+            # Si lo que escribas es lo mismo que lo que hay en ese posicion en el mapa
             if landmark == map[i][j]:
                 # Probabilidad de correcto
                 posterior_p[i][j] = pHit * p[i][j]
