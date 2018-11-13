@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -27,7 +28,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
 ## See http://ros.org/doc/api/catkin/html/user_guide/setup_dot_py.html
-# catkin_python_setup()
+## catkin_python_setup()
 
 ################################################
 ## Declare ROS messages, services and actions ##
@@ -55,16 +56,17 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## Generate messages in the 'msg' folder
 # add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
+#   FILES 
+##   Message1.msg
+##   Message2.msg
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
+#add_service_files(
+#  DIRECTORY srv
+#   FILES AddTwoInts.srv BadTwoInts.srv
+##   Service1.srv
+##   Service2.srv
 # )
 
 ## Generate actions in the 'action' folder
@@ -75,10 +77,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+## generate_messages()
 #   DEPENDENCIES
 #   geometry_msgs#   hardware_msgs#   nav_msgs#   sensor_msgs#   std_msgs#   visualization_msgs
-# )
+#catkin_package(CATKIN_DEPENDS message_runtime)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -109,12 +111,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-catkin_package(
+#catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES rodriguez_miranda
-  CATKIN_DEPENDS geometry_msgs hardware_msgs nav_msgs roscpp rospy sensor_msgs std_msgs tf visualization_msgs
+#  CATKIN_DEPENDS geometry_msgs hardware_msgs nav_msgs roscpp rospy sensor_msgs std_msgs tf visualization_msgs
 #  DEPENDS system_lib
-)
+#)
 
 ###########
 ## Build ##
@@ -167,6 +169,7 @@ add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 
 add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
 ## Specify libraries to link a library or executable target against
  target_link_libraries(practica_01 ${catkin_LIBRARIES})
  target_link_libraries(practica_02 ${catkin_LIBRARIES})
@@ -174,6 +177,7 @@ add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
  target_link_libraries(practica_04 ${catkin_LIBRARIES})
  target_link_libraries(practica_05 ${catkin_LIBRARIES})
  target_link_libraries(practica_06 ${catkin_LIBRARIES})
+ 
 #############
 ## Install ##
 #############
@@ -183,10 +187,13 @@ add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
-# install(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+##install(PROGRAMS
+##  scripts/#my_phyton_scripts
+##  practica_07
+##   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+## )
+#catkin_install_python(PROGRAMS scripts/practica_07
+#    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 ## Mark executables and/or libraries for installation
 # install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
