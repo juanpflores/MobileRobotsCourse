@@ -46,7 +46,7 @@ def move_x(cells, p):
             cell_if_overshoot  = j - cells - 1
             
             #Condiciones porque el mundo es ciclico, si se pasa de indice
-            #se regresa a cero
+            #se regresa a cero 
             if cell_if_undershoot < 0:
                 cell_if_undershoot += len(p[i])
             if cell_if_undershoot >= len(p[i]): 
@@ -60,10 +60,12 @@ def move_x(cells, p):
             if cell_if_overshoot >= len(p[i]):
                 cell_if_overshoot -= len(p[i])
             
-            #Teorema de Probabilidad Total
+            # Agregamos las probabilidades
+            # empleando el    Teorema de Probabilidad Total 
             updated_p[i][j]  = p[i][cell_if_undershoot]*pUnder
+            updated_p[i][j] += p[i][cell_if_overshoot]*pOver  
             updated_p[i][j] += p[i][cell_if_correct]*pCorrect
-            updated_p[i][j] += p[i][cell_if_overshoot]*pOver
+            
                 
     return updated_p
 
@@ -116,9 +118,11 @@ def observe(landmark, p):
     for i in range(len(p)):
         for j in range(len(p[0])):
             if landmark == map[i][j]:
+                # probabilidad posterior es igual a la vesomilitud * probablidad apriori
                 posterior_p[i][j] = pHit * p[i][j]
             else:
                 posterior_p[i][j] = pMiss * p[i][j]
+            # calculamos la probabilidad total, cociente normalizador
             pTotal += posterior_p[i][j]
             
     for i in range(len(p)):
