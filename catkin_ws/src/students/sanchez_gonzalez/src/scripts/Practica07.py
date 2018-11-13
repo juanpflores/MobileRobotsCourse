@@ -33,6 +33,21 @@ def move_x(cells, p):
     # largo de un solo renglon.
     # Almacenar las nuevas probabilidades en el arreglo 'updated_p'
     # 
+    for i in range(len(p)):
+        # Calcula probabilidades de correcto, sobrepaso y retraso
+        cell_if_correct    = i - cells
+        cell_if_undershoot = i - cells + 1
+        cell_if_overshoot  = i - cells - 1
+
+        # Calcula las probabilidades con base a la de la celda
+        cell_if_correct    %= len(p)
+        cell_if_undershoot %= len(p)
+        cell_if_overshoot  %= len(p)
+
+        # Actualiza la probabilidad 
+        updated_p[i]  = p[cell_if_undershoot]*pUnder
+        updated_p[i] += p[cell_if_correct]*pCorrect
+        updated_p[i] += p[cell_if_overshoot]*pOver
     return updated_p
 
 def move_y(cells, p):
@@ -44,6 +59,22 @@ def move_y(cells, p):
     # largo de una sola columna.
     # Almacenar las nuevas probabilidades en el arreglo 'updated_p'
     # 
+    for i in range(len(p)):
+        for j in range(len(p[i])):
+            # Calcula probabilidades de correcto, sobrepaso y retraso
+            cell_if_correct    = j - cells
+            cell_if_undershoot = j - cells + 1
+            cell_if_overshoot  = j - cells - 1
+
+            # Calcula las probabilidades con base a la de la celda
+            cell_if_correct    %= len(p[i])
+            cell_if_undershoot %= len(p[i])
+            cell_if_overshoot  %= len(p[i])
+
+            # Actualiza la probabilidad 
+            updated_p[i][j]  = p[i][cell_if_undershoot]*pUnder
+            updated_p[i][j] += p[i][cell_if_correct]*pCorrect
+            updated_p[i][j] += p[i][cell_if_overshoot]*pOver
     return updated_p
 
 def observe(landmark, p):
@@ -53,18 +84,33 @@ def observe(landmark, p):
     # a realizar una observacion. 
     # Almacenar las nuevas probabilidades en el arreglo 'posterior_p'
     # 
+    pTotal = 0
+    for i in range(len(p)):
+        for j in range(len(p[i])):
+            # Si lo que escribas es lo mismo que lo que hay en ese posición en el mapa
+            if landmark == map[i][j]:
+                # Probabilidad de correcto
+                posterior_p[i][j] = pHit * p[i][j]
+            else:
+                # Probabilidad de incorrecto
+                posterior_p[i][j] = pMiss * p[i][j]
+            pTotal += posterior_p[i][j]
+    
+    for i in range(len(p)):
+        for j in range(len(p[i])):
+            posterior_p[i][j] /= pTotal
     return posterior_p
             
 cmd = ''
-print 'World:'
+print('World:')
 for i in range(len(map)):
-    print map[i]
+    print(map[i])
         
-print 'Initial distribution:'
-print p
+print('Initial distribution:')
+print(p)
 
 while cmd != 'quit' and cmd != 'exit' and cmd != 'q':
-    print 'Enter a command:'
+    print('Enter a command:')
     cmd = raw_input()
     if cmd == 'left':
         p = move_x(-1, p)
@@ -79,9 +125,9 @@ while cmd != 'quit' and cmd != 'exit' and cmd != 'q':
     elif cmd == 'white':
         p = observe(cmd, p)
     else:
-        print 'Pleas enter a valid command'
-    print 'The new probability distribution is:'
-    print p
+        print('Pleas enter a valid command')
+    print('The new probability distribution is:')
+    print(p)
         
     
     
