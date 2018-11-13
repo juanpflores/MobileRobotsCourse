@@ -43,9 +43,9 @@ def move_x(cells, p):
             cell_if_undershoot %= len(p[i])
             cell_if_overshoot  %= len(p[i])
 
-            updated_p[i][j]  = p[cell_if_undershoot][j]*pUnder
-            updated_p[i][j] += p[cell_if_correct][j]*pCorrect
-            updated_p[i][j] += p[cell_if_overshoot][j]*pOver
+            updated_p[i][j]  = p[i][cell_if_undershoot]*pUnder
+            updated_p[i][j] += p[i][cell_if_correct]*pCorrect
+            updated_p[i][j] += p[i][cell_if_overshoot]*pOver
     return updated_p
 
 def move_y(cells, p):
@@ -67,9 +67,9 @@ def move_y(cells, p):
             cell_if_undershoot %= len(p)
             cell_if_overshoot  %= len(p)
 
-            updated_p[j][i]  = p[j][cell_if_undershoot]*pUnder
-            updated_p[j][i] += p[j][cell_if_correct]*pCorrect
-            updated_p[j][i] += p[j][cell_if_overshoot]*pOver
+            updated_p[j][i] = p[cell_if_undershoot][i]*pUnder
+            updated_p[j][i] += p[cell_if_correct][i]*pCorrect
+            updated_p[j][i] += p[cell_if_overshoot][i]*pOver
     return updated_p
 
 def observe(landmark, p):
