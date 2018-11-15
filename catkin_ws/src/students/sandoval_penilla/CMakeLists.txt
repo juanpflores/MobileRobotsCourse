@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   tf
+  occupancy_grid_utils
+  random_numbers
 )
 
 ## System dependencies are found with CMake's conventions
@@ -141,6 +143,7 @@ include_directories(
 add_executable(practica_04 src/Practica04.cpp src/PathPlanner.cpp src/PathPlanner.h src/PathSmoother.cpp src/PathSmoother.h)
 add_executable(practica_05 src/Practica05.cpp)
 add_executable(practica_06 src/Practica06.cpp)
+add_executable(practica_08 src/Practica08.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -152,6 +155,7 @@ add_executable(practica_06 src/Practica06.cpp)
 add_dependencies(practica_04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_08 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(practica_04
@@ -163,7 +167,9 @@ add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
  target_link_libraries(practica_06
    ${catkin_LIBRARIES}
  )
-
+target_link_libraries(practica_08
+   ${catkin_LIBRARIES}
+ )
 #############
 ## Install ##
 #############
