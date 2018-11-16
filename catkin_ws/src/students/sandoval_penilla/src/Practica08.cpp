@@ -15,7 +15,7 @@
 #include "occupancy_grid_utils/ray_tracer.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/GetMap.h"
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "Sandoval_Penilla"
 
 #define NUMBER_OF_PARTICLES 1000
 #define SENSOR_NOISE 0.5
@@ -53,10 +53,21 @@ void Robot::Move(float delta_x, float delta_y, float delta_a)
      * MOVEMENT_NOISE. Remember to keep the orientation in the interval (-pi, pi]
      * Hint: Use the function 'gaussian' of the RandomNumberGenerator object.
      */
+    
+    this->x += delta_x + rng->gaussian(0,MOVEMENT_NOISE);
+    this->y += delta_y + rng->gaussian(0,MOVEMENT_NOISE);
+    this->a += delta_a + rng->gaussian(0,MOVEMENT_NOISE);
+
+    // reducimos el angulo al primero y segundo cuadrante
+    if(this->a > M_PI) this->a -= 2*M_PI;
+    if(this->a < -M_PI) this->a += 2*M_PI;
+
+
 }
 
 sensor_msgs::LaserScan Robot::SimulateSense(nav_msgs::OccupancyGrid& map)
 {
+    // Simulador de Lecturas 
     sensor_msgs::LaserScan scanInfo;
     scanInfo.header.frame_id = "laser_link";
     scanInfo.angle_min = -2;
@@ -94,6 +105,22 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
      */
     std::vector<float> weights;
     weights.resize(particle_measurements.size());
+
+    float weight_sum = 0;
+    
+    for(int i = 0; i < particle_measurements.size(); i++){
+        weights[i] = 0;
+        for(int j = 0; j < real_measurement.ranges.size() ; j*=10)
+        {
+            float error =  real_measurement.ranges[j] - particle_measurements[i].ranges[j];
+            weights[i] += exp(-(error*error)/SENSOR_NOISE) ;
+        }
+        weight_sum += weights[i];
+    }
+     
+    for(int i = 0; i < particle_measurements.size(); i++) {
+        weights[i] = weights[i]/weight_sum;
+    }
     
     return weights;
 }
@@ -112,6 +139,20 @@ int weighted_sample_index(std::vector<float>& weights, float max_weight)
      * Hint: check first answer in https://stackoverflow.com/questions/1761626/weighted-random-numbers
      * (that's why you need the max_weight parameter)
      */
+    float sum_of_weight = 0;
+    
+    for(int i = 0; i < weights.size(); i++){
+        sum_of_weight += weights[i];
+    }
+    // Generamos un numero aleatorio entre 0 y sum_of_weight
+    float rnd = static_cast <float> (rand()) / (static_cast <float> (max_weight/sum_of_weight));
+    
+    for(int i = 0; i < weights.size(); i++){
+        if(rnd < weights[i]) return i;
+        rnd -= weights[i];
+    }
+    
+    
 }
 
 std::vector<Robot> resample(std::vector<Robot>& robots, std::vector<float>& weights)
@@ -131,6 +172,15 @@ std::vector<Robot> resample(std::vector<Robot>& robots, std::vector<float>& weig
      * Return the new set of robots
      */
 
+    // Calculamos el peso maximo
+    float maximum_weight = 0;
+    for(int i = 0; i < weights.size(); i++){
+        if(maximum_weight>weights[i]) maximum_weight = weights[i];
+    }
+    for(int i = 0; i < robots.size() - 1; i++){
+        int weighted_random_index = weighted_sample_index(weights, maximum_weight);
+        resampled_robots[i] = robots[weighted_random_index];
+    }
     return resampled_robots;
 }
 
@@ -224,6 +274,15 @@ int main(int argc, char** argv)
      * Hint: Use the function uniformReal of the RandomNumberGenerator class
      */
 
+    
+    for(int i = 0; i < robots.size()-1; i++){
+        robots[i].x = rnd.uniformReal(-1,11);
+        robots[i].y = rnd.uniformReal(-1,8.5);
+        robots[i].a = rnd.uniformReal(-M_PI,M_PI);
+    }
+      
+
+
     while(ros::ok())
     {
          /*
@@ -246,6 +305,10 @@ int main(int argc, char** argv)
          *   Resample particles using the 'resample' function.
          *   Change the last_robot position and orientation.
          */
+
+        // std::cout << "X: " << pruebaRobot.x << std::endl;
+        // std::cout << "Y: " << pruebaRobot.y << std::endl;
+        // std::cout << "A: " << pruebaRobot.a << std::endl;
         
         pub_markers.publish(particles_marker(robots));
         pub_test.publish(robots[0].SimulateSense(map));
