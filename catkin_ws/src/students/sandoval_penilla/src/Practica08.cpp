@@ -110,9 +110,9 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
     
     for(int i = 0; i < particle_measurements.size(); i++){
         weights[i] = 0;
-        for(int j = 0; j < real_measurement.ranges.size() ; j*=10)
+        for(int j = 0; j < real_measurement.ranges.size() ; j++)
         {
-            float error =  real_measurement.ranges[j] - particle_measurements[i].ranges[j];
+            float error =  real_measurement.ranges[j] - particle_measurements[i].ranges[i];
             weights[i] += exp(-(error*error)/SENSOR_NOISE) ;
         }
         weight_sum += weights[i];
@@ -139,18 +139,21 @@ int weighted_sample_index(std::vector<float>& weights, float max_weight)
      * Hint: check first answer in https://stackoverflow.com/questions/1761626/weighted-random-numbers
      * (that's why you need the max_weight parameter)
      */
+    
+    random_numbers::RandomNumberGenerator rnd;
     float sum_of_weight = 0;
     
     for(int i = 0; i < weights.size(); i++){
         sum_of_weight += weights[i];
     }
     // Generamos un numero aleatorio entre 0 y sum_of_weight
-    float rnd = static_cast <float> (rand()) / (static_cast <float> (max_weight/sum_of_weight));
+    float rnd_num = rnd.uniformReal(0,sum_of_weight);
     
     for(int i = 0; i < weights.size(); i++){
-        if(rnd < weights[i]) return i;
-        rnd -= weights[i];
+        if(rnd_num < weights[i]) return i;
+        rnd_num -= weights[i];
     }
+    assert(!"should never get here");
     
     
 }
@@ -175,9 +178,10 @@ std::vector<Robot> resample(std::vector<Robot>& robots, std::vector<float>& weig
     // Calculamos el peso maximo
     float maximum_weight = 0;
     for(int i = 0; i < weights.size(); i++){
+        maximum_weight = weights[0];
         if(maximum_weight>weights[i]) maximum_weight = weights[i];
     }
-    for(int i = 0; i < robots.size() - 1; i++){
+    for(int i = 0; i < robots.size(); i++){
         int weighted_random_index = weighted_sample_index(weights, maximum_weight);
         resampled_robots[i] = robots[weighted_random_index];
     }
@@ -274,7 +278,8 @@ int main(int argc, char** argv)
      * Hint: Use the function uniformReal of the RandomNumberGenerator class
      */
 
-    
+    std::vector<float> weights;
+
     for(int i = 0; i < robots.size()-1; i++){
         robots[i].x = rnd.uniformReal(-1,11);
         robots[i].y = rnd.uniformReal(-1,8.5);
@@ -306,10 +311,35 @@ int main(int argc, char** argv)
          *   Change the last_robot position and orientation.
          */
 
-        // std::cout << "X: " << pruebaRobot.x << std::endl;
-        // std::cout << "Y: " << pruebaRobot.y << std::endl;
-        // std::cout << "A: " << pruebaRobot.a << std::endl;
+        float delta_x = robot_x - last_robot_x;
+        float delta_y = robot_y - last_robot_y;
+        float delta_a = robot_a - last_robot_a;
+
+        if(abs(delta_a) > ANGLE_THRESHOLD || abs(delta_x) > DIST_THRESHOLD || abs(delta_y) > DIST_THRESHOLD){
+            
+            for(int i = 0; i < robots.size(); i++){
+                robots[i].Move(delta_x,delta_y,delta_a);
+                particle_measurements[i]= robots[i].SimulateSense(map);
+                // std::cout  << particle_measurements[i] << std::endl;
+            }
+        std::vector<float> weights = measurement_weights(particle_measurements,real_scan);
         
+        for(int i = 0; i < weights.size(); i++)
+        {
+            std::cout  << weights[i] << std::endl;
+        }
+        
+        measurement_weights(particle_measurements,real_scan);
+        
+        robots = resample(robots, weights);
+        last_robot_x = t.getOrigin().x();
+        last_robot_y = t.getOrigin().y();
+        q = t.getRotation();
+        last_robot_a = atan2(q.z(), q.w())*2;
+            
+        }
+
+    
         pub_markers.publish(particles_marker(robots));
         pub_test.publish(robots[0].SimulateSense(map));
         ros::spinOnce();
