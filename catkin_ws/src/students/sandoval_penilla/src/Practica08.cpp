@@ -110,13 +110,18 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
     
     for(int i = 0; i < particle_measurements.size(); i++){
         weights[i] = 0;
-        for(int j = 0; j < real_measurement.ranges.size() ; j++)
+        //std::cout << "i: " << particle_measurements[i] << std::endl;
+        for(int j = 0; j < particle_measurements[0].ranges.size() ; j++)
         {
-            float error =  real_measurement.ranges[j] - particle_measurements[i].ranges[i];
+            //std::cout << "real mesurement " << real_measurement.ranges[j] << std::endl;
+            float error =  real_measurement.ranges[j*10] - particle_measurements[i].ranges[j];
             weights[i] += exp(-(error*error)/SENSOR_NOISE) ;
+            
         }
+        
         weight_sum += weights[i];
     }
+    //std::cout << "===============================" << std::endl;
      
     for(int i = 0; i < particle_measurements.size(); i++) {
         weights[i] = weights[i]/weight_sum;
@@ -315,7 +320,7 @@ int main(int argc, char** argv)
         float delta_y = robot_y - last_robot_y;
         float delta_a = robot_a - last_robot_a;
 
-        if(abs(delta_a) > ANGLE_THRESHOLD || abs(delta_x) > DIST_THRESHOLD || abs(delta_y) > DIST_THRESHOLD){
+        if(delta_a > ANGLE_THRESHOLD || delta_x > DIST_THRESHOLD || delta_y > DIST_THRESHOLD){
             
             for(int i = 0; i < robots.size(); i++){
                 robots[i].Move(delta_x,delta_y,delta_a);
@@ -324,18 +329,17 @@ int main(int argc, char** argv)
             }
         std::vector<float> weights = measurement_weights(particle_measurements,real_scan);
         
-        for(int i = 0; i < weights.size(); i++)
-        {
-            std::cout  << weights[i] << std::endl;
-        }
+        // for(int i = 0; i < weights.size(); i++)
+        // {
+        //     std::cout  << weights[i] << std::endl;
+        // }
         
-        measurement_weights(particle_measurements,real_scan);
+        //measurement_weights(particle_measurements,real_scan);
         
         robots = resample(robots, weights);
-        last_robot_x = t.getOrigin().x();
-        last_robot_y = t.getOrigin().y();
-        q = t.getRotation();
-        last_robot_a = atan2(q.z(), q.w())*2;
+        last_robot_x = robot_x;
+        last_robot_y = robot_y;
+        last_robot_a = robot_a;
             
         }
 
