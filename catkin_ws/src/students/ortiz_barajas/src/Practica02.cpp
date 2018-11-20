@@ -9,7 +9,7 @@
 #include "geometry_msgs/Twist.h"
 #include "tf/transform_listener.h"
 #define NOMBRE "ORTIZ_BARAJAS"
-# define PI           3.14159265358979323846 //Definición de PI para ajuste del angulo del robot diferencial
+# define PI 3.14159265358979323846 //Definición de PI para ajuste del angulo del robot diferencial
 int main(int argc, char** argv)
 {
     std::cout << "PRÁCTICA 02 - Control de Posición - " << NOMBRE << std::endl;
