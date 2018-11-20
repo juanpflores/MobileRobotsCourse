@@ -134,13 +134,13 @@ int weighted_sample_index(std::vector<float>& weights, float max_weight)
      * (that's why you need the max_weight parameter)
      */
 
-    random_numbers::RandomNumberGenerator rnd;
+    random_numbers::RandomNumberGenerator randGen;
 
-    float random = rnd.uniformReal(0, max_weight - 1);
+    float rnd = randGen.uniformReal(0, max_weight);
     for(int i = 0; i < weights.size(); i++) {
-        if(random < weights[i])
+        if(rnd < weights[i])
             return i;
-        random -= weights[i];
+        rnd -= weights[i];
     }
 
 }
