@@ -20,8 +20,8 @@
 #define NUMBER_OF_PARTICLES 1000
 #define SENSOR_NOISE 0.5
 #define MOVEMENT_NOISE 0.1
-#define DIST_THRESHOLD 0.2
-#define ANGLE_THRESHOLD 0.2
+#define DIST_THRESHOLD 0.1
+#define ANGLE_THRESHOLD 0.1
 
 class Robot
 {
@@ -110,10 +110,9 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
     
     for(int i = 0; i < particle_measurements.size(); i++){
         weights[i] = 0;
-        //std::cout << "i: " << particle_measurements[i] << std::endl;
+
         for(int j = 0; j < particle_measurements[0].ranges.size() ; j++)
         {
-            //std::cout << "real mesurement " << real_measurement.ranges[j] << std::endl;
             float error =  real_measurement.ranges[j*10] - particle_measurements[i].ranges[j];
             weights[i] += exp(-(error*error)/SENSOR_NOISE) ;
             
@@ -121,7 +120,6 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
         
         weight_sum += weights[i];
     }
-    //std::cout << "===============================" << std::endl;
      
     for(int i = 0; i < particle_measurements.size(); i++) {
         weights[i] = weights[i]/weight_sum;
@@ -285,7 +283,7 @@ int main(int argc, char** argv)
 
     std::vector<float> weights;
 
-    for(int i = 0; i < robots.size()-1; i++){
+    for(int i = 0; i < robots.size(); i++){
         robots[i].x = rnd.uniformReal(-1,11);
         robots[i].y = rnd.uniformReal(-1,8.5);
         robots[i].a = rnd.uniformReal(-M_PI,M_PI);
@@ -320,26 +318,22 @@ int main(int argc, char** argv)
         float delta_y = robot_y - last_robot_y;
         float delta_a = robot_a - last_robot_a;
 
-        if(delta_a > ANGLE_THRESHOLD || delta_x > DIST_THRESHOLD || delta_y > DIST_THRESHOLD){
-            
+        if(abs(delta_a) > ANGLE_THRESHOLD || abs(delta_x) > DIST_THRESHOLD || abs(delta_y) > DIST_THRESHOLD){
+            std::cout  << "Cambio Detectado iniciando calculos" << std::endl;
+
             for(int i = 0; i < robots.size(); i++){
                 robots[i].Move(delta_x,delta_y,delta_a);
                 particle_measurements[i]= robots[i].SimulateSense(map);
                 // std::cout  << particle_measurements[i] << std::endl;
             }
-        std::vector<float> weights = measurement_weights(particle_measurements,real_scan);
-        
-        // for(int i = 0; i < weights.size(); i++)
-        // {
-        //     std::cout  << weights[i] << std::endl;
-        // }
-        
-        //measurement_weights(particle_measurements,real_scan);
-        
-        robots = resample(robots, weights);
-        last_robot_x = robot_x;
-        last_robot_y = robot_y;
-        last_robot_a = robot_a;
+
+            std::vector<float> weights = measurement_weights(particle_measurements,real_scan);  
+            robots = resample(robots, weights);
+            last_robot_x = robot_x;
+            last_robot_y = robot_y;
+            last_robot_a = robot_a;
+
+            std::cout  << "Fin de los calculos" << std::endl;
             
         }
 
