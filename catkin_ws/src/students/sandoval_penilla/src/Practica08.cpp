@@ -20,8 +20,8 @@
 #define NUMBER_OF_PARTICLES 1000
 #define SENSOR_NOISE 0.5
 #define MOVEMENT_NOISE 0.1
-#define DIST_THRESHOLD 0.1
-#define ANGLE_THRESHOLD 0.1
+#define DIST_THRESHOLD 0.2
+#define ANGLE_THRESHOLD 0.2
 
 class Robot
 {
@@ -128,7 +128,7 @@ std::vector<float> measurement_weights(std::vector<sensor_msgs::LaserScan>& part
     return weights;
 }
 
-int weighted_sample_index(std::vector<float>& weights, float max_weight)
+int weighted_sample_index(std::vector<float>& weights, float sum_of_weight)
 {
     /*
      * TODO:
@@ -144,11 +144,6 @@ int weighted_sample_index(std::vector<float>& weights, float max_weight)
      */
     
     random_numbers::RandomNumberGenerator rnd;
-    float sum_of_weight = 0;
-    
-    for(int i = 0; i < weights.size(); i++){
-        sum_of_weight += weights[i];
-    }
     // Generamos un numero aleatorio entre 0 y sum_of_weight
     float rnd_num = rnd.uniformReal(0,sum_of_weight);
     
@@ -179,13 +174,12 @@ std::vector<Robot> resample(std::vector<Robot>& robots, std::vector<float>& weig
      */
 
     // Calculamos el peso maximo
-    float maximum_weight = 0;
+    float sum_of_weight = 0;
     for(int i = 0; i < weights.size(); i++){
-        maximum_weight = weights[0];
-        if(maximum_weight>weights[i]) maximum_weight = weights[i];
+        sum_of_weight += weights[i];
     }
     for(int i = 0; i < robots.size(); i++){
-        int weighted_random_index = weighted_sample_index(weights, maximum_weight);
+        int weighted_random_index = weighted_sample_index(weights, sum_of_weight);
         resampled_robots[i] = robots[weighted_random_index];
     }
     return resampled_robots;
@@ -317,8 +311,9 @@ int main(int argc, char** argv)
         float delta_x = robot_x - last_robot_x;
         float delta_y = robot_y - last_robot_y;
         float delta_a = robot_a - last_robot_a;
+        float dist    = sqrt(delta_x*delta_x + delta_y*delta_y);
 
-        if(abs(delta_a) > ANGLE_THRESHOLD || abs(delta_x) > DIST_THRESHOLD || abs(delta_y) > DIST_THRESHOLD){
+        if(abs(delta_a) > ANGLE_THRESHOLD || dist > DIST_THRESHOLD){
             std::cout  << "Cambio Detectado iniciando calculos" << std::endl;
 
             for(int i = 0; i < robots.size(); i++){
