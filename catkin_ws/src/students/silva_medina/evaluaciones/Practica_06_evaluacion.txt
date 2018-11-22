@@ -1,0 +1,6 @@
+Alumno: Silva Medina
+Calificación: 10.0
+Comentarios:
+El programa funciona correctamente, sin embargo, es necesario
+ajustar mejor las constantes puesto que el robot frecuentemente
+choca con las paredes. 
