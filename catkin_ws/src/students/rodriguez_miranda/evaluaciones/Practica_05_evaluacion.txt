@@ -1,0 +1,8 @@
+Alumno: Rodríguez Miranda
+Calificación: 6.0
+Comentarios:
+Hay dos versiones de la práctica. Una se subió a tiempo y otra varios días tardes.
+Tomé la versión que se subió a tiempo.
+El programa no funciona correctamente, sólo sigue el punto al final de la ruta
+y no la ruta en sí.
+En general, el programa no realiza la tarea correctamente. 

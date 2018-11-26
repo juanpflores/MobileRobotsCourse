@@ -1,0 +1,4 @@
+Alumno: Rodríguez Miranda
+Calificación: 6.0
+Comentarios:
+La práctica fue entregada tarde. 
