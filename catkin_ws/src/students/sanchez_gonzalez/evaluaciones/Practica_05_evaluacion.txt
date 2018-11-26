@@ -1,0 +1,6 @@
+Alumno: Sánchez González
+Calificación: 10
+Comentarios:
+El programa funciona correctamente, pero es necesario mejorar las constantes
+puesto que el robot oscila mucho y en la implementacion en el robot real, puede
+causar problemas. 

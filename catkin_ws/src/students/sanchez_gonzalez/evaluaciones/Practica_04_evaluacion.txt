@@ -1,0 +1,4 @@
+Alumno: Sánchez González
+Calificación: 10.0
+Comentarios:
+El programa funciona correctamente. 

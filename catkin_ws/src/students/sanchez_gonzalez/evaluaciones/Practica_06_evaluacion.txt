@@ -1,0 +1,7 @@
+Alumno: Sánchez González
+Calificación: 10.0
+Comentarios:
+El programa realiza los pasos correctamente para el cálculo de campos potenciales
+pero la evasión de obstáculos falla debido, probablemente, a una mala sintonización de las
+constantes. El robot choca frecuentemente con los obstáculos del mapa.
+Es necesario mejorar las constantes. 

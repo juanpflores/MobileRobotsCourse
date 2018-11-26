@@ -1,0 +1,4 @@
+Alumno: Sánchez González
+Calificación: 10
+Comentarios:
+La práctica funciona correctamente. 
