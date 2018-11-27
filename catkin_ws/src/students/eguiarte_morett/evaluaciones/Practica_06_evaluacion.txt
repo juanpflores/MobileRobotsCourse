@@ -1,0 +1,6 @@
+Alumno: Eguiarte Morett
+Calificación: 9
+Comentarios:
+El programa hace bien los cálculos de las fuerzas atractiva y repulsiva
+pero falta sintonizar mejor las constantes porque el robot
+choca varias veces a lo largo de su trayectoria. 

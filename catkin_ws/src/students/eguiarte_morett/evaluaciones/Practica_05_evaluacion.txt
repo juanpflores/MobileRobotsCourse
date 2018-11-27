@@ -1,0 +1,5 @@
+Alumno: Eguiarte Morett
+Calificación: 10
+Comentarios:
+Funciona correctamente. Sólo debes respetar la velocidad máxima de 0.5 m/s
+para evitar daños al robot real. 
