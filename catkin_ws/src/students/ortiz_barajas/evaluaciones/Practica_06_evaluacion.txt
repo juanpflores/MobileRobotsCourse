@@ -1,0 +1,10 @@
+Alumno: Ortiz Barajas
+Calificación: 9.0
+Comentarios:
+El robot choca con los obstáculos.
+Las fuerzas atractiva y repulsiva está bien calculadas pero hay que mejorar la
+sintonización de las constantes.
+El principal problema son las constantes del control.
+El algoritmo de campos potenciales calcula bien el punto a donde se
+debe mover el robot para evadir obstáculos pero el robot no se mueve
+hacia dicho punto por problemas con las constantes del control de posición. 
