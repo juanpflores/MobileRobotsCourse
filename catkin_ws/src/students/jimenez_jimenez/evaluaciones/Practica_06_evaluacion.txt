@@ -1,0 +1,4 @@
+Alumno: Jiménez Jiménez
+Calificación: 10.0
+Comentarios:
+Funciona correctamente. Muy buena evasión de obstáculos. 

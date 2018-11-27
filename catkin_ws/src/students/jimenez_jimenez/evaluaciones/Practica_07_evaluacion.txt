@@ -1,0 +1,6 @@
+Alumno: Jiménez Jiménez
+Calificación: 8.0
+Comentarios:
+El programa realiza bien la actualización de las probabilidades cuando se
+realiza una observación y cuando se hace un movimiento horizontal,
+pero falla al actualizar con movimientos verticales. 
