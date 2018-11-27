@@ -1,0 +1,4 @@
+Alumno: García Gómez
+Calificación: 10
+Comentarios:
+La práctica funciona correctamente. 

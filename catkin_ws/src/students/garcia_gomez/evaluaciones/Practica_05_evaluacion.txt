@@ -1,0 +1,4 @@
+Alumno: García Gómez
+Calificación: 6.0
+Comentarios:
+El robot no sigue la ruta, sólo se mueve hacia el último punto de la ruta. 
