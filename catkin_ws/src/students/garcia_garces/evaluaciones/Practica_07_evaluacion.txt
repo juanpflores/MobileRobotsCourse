@@ -1,0 +1,7 @@
+Alumno: García Garcés
+Calificación: 8.0
+Comentarios:
+La actualización de las probabilidades se hace correctamente en el caso de las observaciones
+pero falla en el caso de los movimientos.
+El código del movimiento en X, en realidad hace un movimiento en Y.
+El código del movimiento en Y es incorrecto. 

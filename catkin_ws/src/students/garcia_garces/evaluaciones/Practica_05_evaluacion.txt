@@ -1,0 +1,5 @@
+Alumno: García Garcés
+Calificación: 6.0
+Comentarios:
+El programa no sigue la ruta. Sólo mueve al robot hacia el último punto
+de la ruta pero no sigue la ruta en sí. 
