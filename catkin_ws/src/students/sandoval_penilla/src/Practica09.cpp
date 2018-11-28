@@ -144,8 +144,8 @@ int main(int argc, char** argv)
      */
     std::string folder = "";
     int   digit_to_train = 0;
-    float delta = 1.0;
-    int   max_epochs = 10;
+    float delta = 0.1;
+    int   max_epochs = 100;
     for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
@@ -175,6 +175,8 @@ int main(int argc, char** argv)
     Perceptron p(28*28);
     
     std::cout << "Training for digit: " << digit_to_train << std::endl;
+    std::cout << "Max epochs: " << max_epochs << std::endl;
+    std::cout << "Delta: " << delta << std::endl;
     /*
      * TODO:
      * Write the code to train the perceptron using the gradient descend method.
@@ -188,51 +190,37 @@ int main(int argc, char** argv)
      *       threshold -= delta * gradient_t (similar to gradient_i but considering the input as 1)
      *    Calculate gradien t's magnitude
      */
-    float tol = 0.001;
-    float gradient_mag = tol + 1;
+    float tol = 0.1;
+    float gradient_mag = 1;
     int epochs = 0;
-    float gradient_gain = 0.000005;
     float gradient_i = 0;
 
-    
-    
     while(gradient_mag > tol && ++epochs <= max_epochs){
         std::vector<float> last_w = p.w;
         float last_theta = p.theta;
-        
         
         for(int j = 0; j < 60000; j++)
         {
             float estimated_y = p.evaluate((float*)training_images[j].data);
             float desired_output = training_labels[j] == digit_to_train ? 1.0 : 0;
-            float temp =  ( desired_output - estimated_y)*(estimated_y - estimated_y*estimated_y);
+            float temp =  (estimated_y - desired_output)*(estimated_y - estimated_y*estimated_y);
              
             for(int i = 0; i < p.w.size(); i++)
             {
                 gradient_i = temp * ((float*)training_images[j].data)[i];
-                p.w[i] += delta * gradient_i;
+                p.w[i] -= delta * gradient_i;
             }
             gradient_i = temp;
-            p.theta += delta * gradient_i;
-            
-            
+            p.theta -= delta * gradient_i;
         }
 
         gradient_mag = 0;
         
         for(int i = 0; i < p.w.size(); i++)
-        {
             gradient_mag += fabs(p.w[i] - last_w[i]); 
-        }
         gradient_mag += fabs(p.theta - last_theta);
-        std::cout  <<" Magnitud gradiente " << gradient_mag <<std::endl;      
-       
-        
+        std::cout << "Epoca: " << epochs <<"    Magnitud del gradiente " << gradient_mag <<std::endl;      
     }
-    
-
-    
-    
 
     //Once the perceptron is trained, we proceed to test it .
     //We choose a random image of the testing set. The image is displayed and the output of the
