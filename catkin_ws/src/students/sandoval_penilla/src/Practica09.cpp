@@ -12,7 +12,7 @@
 #include "ros/package.h"
 #include "random_numbers/random_numbers.h"
 
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "Sandoval_Penilla"
 
 class Perceptron
 {
