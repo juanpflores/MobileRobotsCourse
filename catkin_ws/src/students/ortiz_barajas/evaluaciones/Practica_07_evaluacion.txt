@@ -1,0 +1,4 @@
+Alumno: Ortiz Barajas
+Calificación: 10
+Comentarios:
+La práctica funciona correctamente. 

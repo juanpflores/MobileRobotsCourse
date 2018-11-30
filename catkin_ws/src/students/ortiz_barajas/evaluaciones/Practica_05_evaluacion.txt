@@ -1,0 +1,6 @@
+Alumno: Ortiz Barajas
+Calificación: 10.0
+Comentarios: La práctica funciona correctamente pero hay que mejorar algunas cosas:
+En algunos puntos intermedios de la ruta el robot gira sobre sí mismo.
+Esto se puede corregir mejorando la sintonización de las constantes y en la forma en que
+se elige el siguiente punto de la ruta a seguir. 
