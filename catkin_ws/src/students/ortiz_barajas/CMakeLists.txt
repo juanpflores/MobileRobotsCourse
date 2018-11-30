@@ -148,6 +148,7 @@ add_executable(practica04 src/Practica04.cpp src/PathPlanner.cpp src/PathSmoothe
 add_executable(practica05 src/Practica05.cpp)
 add_executable(practica06 src/Practica06.cpp)
 add_executable(practica08 src/Practica08.cpp)
+add_executable(practica09 src/Practica09.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -164,6 +165,7 @@ add_dependencies(practica04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTE
 add_dependencies(practica05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica08 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica09 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(practica01
@@ -185,6 +187,9 @@ target_link_libraries(practica06
    ${catkin_LIBRARIES}
  )
 target_link_libraries(practica08
+   ${catkin_LIBRARIES}
+ )
+target_link_libraries(practica09
    ${catkin_LIBRARIES}
  )
 #############
