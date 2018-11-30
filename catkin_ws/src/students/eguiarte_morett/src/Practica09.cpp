@@ -82,27 +82,26 @@ void Perceptron::train(std::vector<cv::Mat> training_images, std::vector<int>tra
     }
     
     do{ 
+        std::vector<float> w_old = w;
+        float theta_old = theta;
         gradient_mag = 0;
+        
         for(int i = 0; i < training_images.size(); ++i){
-           
             float estimated_y = this->evaluate((float*)training_images[i].data);
-            float grad = 0;
-            for(int j = 0; j < training_images.size(); ++j){
-                grad += (estimated_y - desired_output[j])*(estimated_y*(1-estimated_y));
-            }
-            //grad/=training_images.size();
-            //std::cout<< gradient_mag << std::endl;
-            for(int j = 0; j < w.size(); j++){
-                w[j] -= this->delta * grad * (float)training_images[i].data[j];
-                gradient_mag+=grad * (float)training_images[i].data[j];
-            }
+            float grad = (estimated_y - desired_output[i])*(estimated_y*(1-estimated_y));
+            for(int j = 0; j < w.size(); j++)
+                w[j] -= this->delta * grad * ((float*)training_images[i].data)[j];
             theta -= this->delta * grad;
         }
+
+        for(int i = 0; i < w.size(); i++)
+            gradient_mag += fabs(w[i] - w_old[i]); 
+        gradient_mag += fabs(theta - theta_old);
         epoch++;
         std::cout<< epoch << std::endl;
         std::cout<< gradient_mag << std::endl;
          
-    }while(abs(gradient_mag) > this->tolerance && epoch < this->max_epochs);
+    }while(gradient_mag > this->tolerance && epoch <= this->max_epochs);
 }
 
 void load_training_data(std::string folder, std::vector<cv::Mat>& training_images, std::vector<int>& training_labels)
@@ -222,7 +221,7 @@ int main(int argc, char** argv)
 
     // We declare a new perceptron whose weights are initialized all to zero (see constructor's code)
     // The parameter indicates the number of input signals. 
-    Perceptron p(28*28, max_epochs, digit_to_train, 2000.0f, delta);
+    Perceptron p(28*28, max_epochs, digit_to_train, 0.1f, delta);
     
     std::cout << "Training for digit: " << digit_to_train << std::endl;
     /*
