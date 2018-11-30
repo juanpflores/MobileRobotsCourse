@@ -142,9 +142,9 @@ int main(int argc, char** argv)
      * epochs: Maximum number of times the full data set is passed.
      */
     std::string folder = "";
-    int   digit_to_train = 0;
-    float delta = 1.0;
-    int   max_epochs = 10;
+    int   digit_to_train = 6;
+    float delta = 0.2;
+    int   max_epochs = 18;
     for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
@@ -188,31 +188,27 @@ int main(int argc, char** argv)
      *    Calculate gradient's magnitude
      */
     int epochs = 0;
-    float gradient_mag = 10000;
+    float gradient_mag = 0;
     float tolerance = 2000;
-    std::vector<float> desired_output;
-    desired_output.resize(training_labels.size());
+    float  desired_output;
+    std::vector<float> old_w = p.w;
 
-    while((abs(gradient_mag) > tolerance) && (epochs < max_epochs)){
+    while((gradient_mag < tolerance) && (epochs < max_epochs)){
         gradient_mag = 0;
-        for(int k = 0; k < training_labels.size(); k++)
-            training_labels[k] == digit_to_train ? desired_output[k] = 1.0 :  desired_output[k] = 0.0;
-        
+     
         for (int i = 0; i < training_images.size() ; i++)
         {
             float estimated_y = p.evaluate((float*)training_images[i].data);
+            training_labels[i] == digit_to_train ? desired_output = 1.0 :  desired_output = 0.0;
             float grad_aux = 0;
-            for(int l = 0; l < training_images.size(); l++)
-                grad_aux += (estimated_y - desired_output[l])*(estimated_y - estimated_y*estimated_y);
+            grad_aux = (estimated_y - desired_output)*(estimated_y - estimated_y*estimated_y);
             
             for (int j = 0; j < p.w.size(); j++)
-            {
-                p.w[j] -= delta*grad_aux*(float)training_images[i].data[j];
-                gradient_mag += grad_aux*(float)training_images[i].data[j];
-            }
+                p.w[j] -= delta*grad_aux*((float*)training_images[i].data)[j];
             p.theta -= delta*grad_aux;
         }
-        
+        for(int k = 0; k < p.w.size(); k++ )
+            gradient_mag += fabs(p.w[k] - old_w[k]);
         epochs++;
         std::cout<< "Epoch: "<<epochs <<"    Magnitude_grad: "<< gradient_mag << std::endl;
 
