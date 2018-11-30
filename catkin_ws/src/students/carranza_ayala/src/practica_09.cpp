@@ -12,7 +12,7 @@
 #include "ros/package.h"
 #include "random_numbers/random_numbers.h"
 
-#define NOMBRE "APELLIDO_PATERNO_APELLIDO_MATERNO"
+#define NOMBRE "CARRANZA_AYALA"
 
 class Perceptron
 {
@@ -186,7 +186,7 @@ int main(int argc, char** argv)
      */
     
 
-    int epoch;
+    int epoch = 0;
     float gradient_mag;
     float tolerance = 2000.0;
     std::vector<float> gradient;
