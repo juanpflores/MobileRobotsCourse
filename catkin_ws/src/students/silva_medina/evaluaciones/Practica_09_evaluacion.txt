@@ -1,0 +1,5 @@
+Alumno: Silva Medina
+Calificación: 6.0
+Comentarios:
+La salida del perceptrón ya entrenado es siempre 0, es decir,
+no está haciendo bien la clasificación. 
