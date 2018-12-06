@@ -1,4 +1,5 @@
 Alumno: Jiménez Jiménez
-Calificación: 0
+Calificación: 10
 Comentarios:
-La práctica no fue entregada.
+La práctica funciona correctamente
+
