@@ -1,0 +1,5 @@
+Alumno: Sánchez González
+Calificación: 6
+Comentarios:
+El programa siempre arroja 0.5 como salida del perceptrón,
+es decir, no está realizando bien la clasificación. 
