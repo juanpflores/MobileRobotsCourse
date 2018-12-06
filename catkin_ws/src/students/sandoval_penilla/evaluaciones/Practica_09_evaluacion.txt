@@ -1,0 +1,4 @@
+Alumno: Sandoval Penilla
+Calificación: 10.0
+Comentarios:
+El programa funciona correctamente. 
