@@ -150,6 +150,13 @@ add_executable(practica_06 src/Practica06.cpp src/PathPlanner.cpp src/PathSmooth
 add_executable(practica_08 src/Practica08.cpp src/PathPlanner.cpp src/PathSmoother.cpp)
 add_executable(practica_09 src/Practica09.cpp)
 
+## Resueltos
+add_executable(practica_03_solved src/Practica03_solved.cpp src/PathPlannerSolved.cpp)
+add_executable(practica_04_solved src/Practica04_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+add_executable(practica_05_solved src/Practica05_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+add_executable(practica_06_solved src/Practica06_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+add_executable(practica_08_solved src/Practica08_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
@@ -166,6 +173,13 @@ add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_08 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_09 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+# Resueltos
+add_dependencies(practica_03_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_04_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_05_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_06_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_08_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(practica_01
@@ -199,6 +213,28 @@ target_link_libraries(practica_08
 target_link_libraries(practica_09
   ${catkin_LIBRARIES}
 )
+
+# Resueltos
+target_link_libraries(practica_03_solved
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(practica_04_solved
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(practica_05_solved
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(practica_06_solved
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(practica_08_solved
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############
