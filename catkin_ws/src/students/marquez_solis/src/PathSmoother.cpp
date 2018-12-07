@@ -1,7 +1,5 @@
 #include "PathSmoother.h"
-#include "futils.h"
-using std::vector;
-constexpr int smooth_max_iter = 30;
+
 nav_msgs::OccupancyGrid PathSmoother::InflateObstacles(nav_msgs::OccupancyGrid& map,  float inflation_radius)
 {
     nav_msgs::OccupancyGrid inflated = map;
@@ -22,102 +20,80 @@ nav_msgs::OccupancyGrid PathSmoother::InflateObstacles(nav_msgs::OccupancyGrid& 
     return inflated;
 }
 
-inline int posGrid(int x,int y,int w){
-    return x+y*w;
-}
-
 nav_msgs::OccupancyGrid PathSmoother::GetNearnessMap(nav_msgs::OccupancyGrid& map, float nearness_radius)
 {
+    //This function calculates the "nearness to obstacles", e.g., for the following grid:
+    /*
+      0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 3 3 3 3 3 2 1 0 1 1 1 1 1
+      0 0 x x x 0 0 0 0 0 0 0 0 0                           2 3 x x x 3 2 1 0 1 2 2 2 2
+      0 0 x x 0 0 0 0 0 0 0 0 0 0   the resulting nearness  2 3 x x 3 3 2 1 0 1 2 3 3 3
+      0 0 x x 0 0 0 0 0 0 0 0 x x   values would be:        2 3 x x 3 2 2 1 0 1 2 3 x x
+      0 0 0 0 0 0 0 0 0 0 0 0 x x                           2 3 3 3 3 2 1 1 0 1 2 3 x x
+      0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 2 2 2 2 2 1 0 0 1 2 3 3 3
+      Max nearness value will depend on the distance of influence (nearness radius)
+    */
     if(nearness_radius <= 0)
-	return map;	
+	return map;
+	
     nav_msgs::OccupancyGrid nearnessMap = map;
-    auto &data = map.data;
-    auto &out = nearnessMap.data;
-    auto w = map.info.width;
-    int max_rad= std::round(nearness_radius/map.info.resolution);
-    for(auto &e : out)
-        e = 0;
-    for(int i = 0; i < data.size();i++){
-        if(data[i] < 40) continue;
-        for(int rad = 1;rad <= max_rad;rad++){
-            int near_value = max_rad -rad + 1;
-            
-            for(int k = -rad;k <= rad;k++){
-                int idx = i + posGrid(k,-rad,w);
-                if (data[idx] > 60) out[idx] = 100;
-                if(out[idx] < near_value)
-                    out[idx] = near_value;
-            }
-            for(int k = -rad;k <= rad;k++){
-                int idx = i + posGrid(k,rad,w);
-                if (data[idx] > 60) out[idx] = 100;
-                else if(out[idx] < near_value)
-                    out[idx] = near_value;
-            }
-            for(int k = -rad + 1;k < rad;k++){
-                int idx = i + posGrid(rad,k,w);
-                if (data[idx] > 60) out[idx] = 100;
-                else if(out[idx] < near_value)
-                    out[idx] = near_value;
-            }
-            for(int k = -rad + 1;k < rad;k++){
-                int idx = i + posGrid(-rad,k,w);
-                if (data[idx] > 60) out[idx] = 100;
-                else if(out[idx] < near_value)
-                    out[idx] = near_value;
-            }
-            
+    int steps = (int)(nearness_radius / map.info.resolution);
+    
+    int boxSize = (steps*2 + 1) * (steps*2 + 1);
+    int* distances = new int[boxSize];
+    int* neighbors = new int[boxSize];
+
+    int counter = 0;
+    for(int i=-steps; i<=steps; i++)
+        for(int j=-steps; j<=steps; j++)
+        {
+            neighbors[counter] = i*map.info.width + j;
+            distances[counter] = (steps - std::max(std::abs(i), std::abs(j)) + 1);
+            counter++;
         }
-    }
+    
+    for(int i=0; i < map.data.size(); i++)
+        if(map.data[i] > 40)
+            for(int j = 0; j < boxSize; j++)
+                if(nearnessMap.data[i+neighbors[j]] < distances[j])
+                    nearnessMap.data[i+neighbors[j]] = distances[j];
+
+    delete[] distances;
+    delete[] neighbors;
     return nearnessMap;
-}
-
-vector<Vec<2>> path2Vec(const nav_msgs::Path &q){
-    vector<Vec<2>> res;
-    res.resize(q.poses.size());
-    for (int i = 0; i < q.poses.size(); i++){
-        auto &p = q.poses[i].pose.position;
-        res[i][0] = p.x;
-        res[i][1] = p.y;
-    }
-    return res;
-}
-
-void vec2Path(nav_msgs::Path &res, const vector<Vec<2>> &q){
-    for (int i = 0; i < q.size(); i++){
-        auto &p = res.poses[i].pose.position;
-        p.x = q[i][0];
-        p.y = q[i][1];
-    }
-}
-
-Vec<2> localGradient(int index, const vector<Vec<2>> &orig, const vector<Vec<2>> &next, double a, double b){
-    Vec<2> dist_gradient = zero< Vec<2> >();
-    if(index > 0)
-        dist_gradient += next[index] - next[index-1];
-    if (index < orig.size() -1 && orig.size() > 0)
-        dist_gradient += next[index] - next[index+1];
-    return (next[index]-orig[index])*b + dist_gradient * a;
 }
 
 nav_msgs::Path PathSmoother::SmoothPath(nav_msgs::Path& path, float alpha, float beta)
 {
-
-    nav_msgs::Path newPath = path;    
+    nav_msgs::Path newPath = path;
+    
     if(path.poses.size() < 3)
         return newPath;
-    auto orig = path2Vec(path);
-    auto next = orig;
-    auto buffer = orig;
-    auto size = orig.size();
-    
-    for(int l = 0;l < 70;l++){
-        for(int i = 0;i < size;i++)
-            buffer[i] = next[i] - localGradient(i,orig,next,alpha,beta)*0.5;
-        next = buffer;
+
+    float tolerance = 0.00001 * path.poses.size();
+    int   attempts  = 10000;
+    float grad_mag  = tolerance + 1;
+    float delta     = 0.5;
+    while(grad_mag >= tolerance && --attempts > 0)
+    {
+        grad_mag = 0;
+        for(int i=1; i< path.poses.size() - 1; i++)
+        {
+	    float xo_i  = path.poses[i].pose.position.x;
+	    float yo_i  = path.poses[i].pose.position.y;
+	    float xn_i  = newPath.poses[i].pose.position.x;
+	    float yn_i  = newPath.poses[i].pose.position.y;
+	    float xn_ip = newPath.poses[i-1].pose.position.x;
+	    float yn_ip = newPath.poses[i-1].pose.position.y;
+	    float xn_in = newPath.poses[i+1].pose.position.x;
+	    float yn_in = newPath.poses[i+1].pose.position.y;
+	    float grad_x = beta*(xn_i - xo_i) + alpha*(2*xn_i - xn_ip - xn_in);
+	    float grad_y = beta*(yn_i - yo_i) + alpha*(2*yn_i - yn_ip - yn_in);
+	    
+            newPath.poses[i].pose.position.x = newPath.poses[i].pose.position.x - delta*grad_x;
+	    newPath.poses[i].pose.position.y = newPath.poses[i].pose.position.y - delta*grad_y;
+
+	    grad_mag += fabs(grad_x) + fabs(grad_y);
+        }
     }
-    
-    
-    vec2Path(newPath,next);
     return newPath;
 }

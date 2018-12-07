@@ -169,7 +169,7 @@ int main(int argc, char** argv)
     float gradient;
     int epochs = 0;
     float avg_grad = INFINITY;
-    while(avg_grad > 0.01 && epochs < max_epochs){
+    while(avg_grad > 0.02 && epochs < max_epochs){
          avg_grad = 0.0;
         for(int i = 0; i < training_labels.size(); i++){
             float* mat = reinterpret_cast<float*>(training_images[i].ptr());
@@ -190,7 +190,7 @@ int main(int argc, char** argv)
         epochs++;
     }
     std::cout << "Training done in " << epochs << "/" << max_epochs << " cycles\n";
-    std::cout << "Gradient norm: " << avg_grad << std::endl;
+    std::cout << "Gradient norm: " << avg_grad/training_labels.size()<< std::endl;
     
     /*
      * TODO:
