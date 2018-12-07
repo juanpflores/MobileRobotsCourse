@@ -66,9 +66,9 @@ sensor_msgs::LaserScan Robot::SimulateSense(nav_msgs::OccupancyGrid& map)
 {
     sensor_msgs::LaserScan scanInfo;
     scanInfo.header.frame_id = "laser_link";
-    scanInfo.angle_min = -2;
-    scanInfo.angle_max = 2;
-    scanInfo.angle_increment = 0.07;
+    scanInfo.angle_min = -1.57079637051;
+    scanInfo.angle_max = 1.57079637051;
+    scanInfo.angle_increment = 0.00613592332229*10;
     scanInfo.scan_time = 0.1;
     scanInfo.range_min = 0.01;
     scanInfo.range_max = 4.0;
