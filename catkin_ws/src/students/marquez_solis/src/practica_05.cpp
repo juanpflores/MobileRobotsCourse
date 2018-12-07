@@ -21,6 +21,7 @@ float global_goal_y;
 float robot_x;
 float robot_y;
 float robot_a;
+int idx = 0;
 /*
  * global_plan: stores the path to be tracked.
  * cltPlanPath: service client used to call the service for calculating a path. 
@@ -70,6 +71,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
     srv.request.goal.pose.position.y  = global_goal_y;
     clt_plan_path.call(srv);
     global_plan = srv.response.plan;
+    idx = 0;
 }
 
 int main(int argc, char** argv)
@@ -81,14 +83,13 @@ int main(int argc, char** argv)
 
     ros::Subscriber sub_goto_xya = n.subscribe("/navigation/go_to_xya", 1, callback_go_to_xya);
     ros::Publisher  pub_cmd_vel  = n.advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
-    clt_plan_path = n.serviceClient<nav_msgs::GetPlan>("/navigation/path_planning/breadth_first_search");
+    clt_plan_path = n.serviceClient<nav_msgs::GetPlan>("/navigation/path_planning/a_star_search");
     tf::TransformListener tl;
     tf::StampedTransform t;
     tf::Quaternion q;
     double g_x, g_y;
-    int idx = 0;
     geometry_msgs::Twist msg_cmd_vel;
-    constexpr double changetol = 0.25;
+    constexpr double changetol = 0.05;
 
     while(ros::ok())
     {
@@ -108,9 +109,10 @@ int main(int argc, char** argv)
         }
         g_x = global_plan.poses[idx].pose.position.x;
         g_y =global_plan.poses[idx].pose.position.y;
-        double dist_local = (g_x-robot_x)*(g_x-robot_x) + (g_y-robot_y)*(g_x-robot_y);
-        std::cout << "dist: " << dist_local << std::endl;
+        double dist_local = (g_x-robot_x)*(g_x-robot_x) + (g_y-robot_y)*(g_y-robot_y);
+
         if( dist_local < changetol && idx < global_plan.poses.size()-1){
+            std::cout << " pt: " << idx << " d:" << dist_local << std::endl;
             idx++;
         }
         
