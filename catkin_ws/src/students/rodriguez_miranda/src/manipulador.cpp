@@ -56,14 +56,14 @@ arm/current_pose", 1);
   
   while(ros::ok())
     {
-      float CT1=px-ax(l5+l6);
+      /*      float CT1=px-ax(l5+l6);
       float ST1=py+ay(l5+l6);
-      float T1=atan(ST1,CT1);
+      float T1=atan(ST1,CT1);*/
       // for(int i=0; i<20; i++)
       // {
       
-      jointStates.position[0]=
-      jointStates.position[1]=;
+      jointStates.position[0]=5;
+      jointStates.position[1]=1;
            for(int i = 0; i < 7; i++)
 	 msgCurrPose.data[i] = jointStates.position[i];
        
