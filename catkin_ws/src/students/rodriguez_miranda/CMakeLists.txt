@@ -146,10 +146,10 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(practica_08 src/Practica08_solved.cpp)
  add_executable(practica_02 src/practica_02.cpp)
- add_executable(practica_03 src/practica_03.cpp src/PathPlanner.cpp)
- add_executable(practica_04 src/practica_04.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
- add_executable(practica_05 src/practica_05.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
- add_executable(practica_06 src/Practica06_solved.cpp src/PathSmoother.cpp src/PathPlanner.cpp)
+ add_executable(practica_03 src/Practica03_solved.cpp src/PathPlannerSolved.cpp)
+ add_executable(practica_04 src/Practica04.cpp src/PathSmootherSolved.cpp src/PathPlannerSolved.cpp)
+ add_executable(practica_05 src/Practica05_solved.cpp src/PathSmootherSolved.cpp src/PathPlannerSolved.cpp)
+ add_executable(practica_06 src/Practica06_solved.cpp src/PathSmootherSolved.cpp src/PathPlannerSolved.cpp)
  add_executable(practica_01 src/practica_01.cpp)
  add_executable(manipulador src/manipulador.cpp) 
 
