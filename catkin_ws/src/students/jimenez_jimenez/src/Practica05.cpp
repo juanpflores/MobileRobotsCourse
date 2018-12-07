@@ -114,8 +114,8 @@ int main(int argc, char** argv)
     
     float alpha = 0.6548;
     float beta  = 0.01;
-    float v_max = 0.5;
-    float w_max = 0.5;
+    float v_max = 0.3;
+    float w_max = 0.3;
 
    
     if(aux==1){
