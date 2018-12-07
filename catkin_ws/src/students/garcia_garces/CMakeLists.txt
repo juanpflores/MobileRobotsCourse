@@ -154,6 +154,7 @@ add_executable(practica_04_solved src/Practica04_solved.cpp src/PathPlannerSolve
 add_executable(practica_05_solved src/Practica05_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
 add_executable(practica_06_solved src/Practica06_solved.cpp)
 add_executable(practica_08_solved src/Practica08_solved.cpp)
+add_executable(Practica08 src/Practica08.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -177,6 +178,7 @@ add_dependencies(practica_04_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin
 add_dependencies(practica_05_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_06_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_08_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(Practica08 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
@@ -215,6 +217,9 @@ target_link_libraries(practica_06_solved
   ${catkin_LIBRARIES}
   )
 target_link_libraries(practica_08_solved
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(Practica08
   ${catkin_LIBRARIES}
   )
 
