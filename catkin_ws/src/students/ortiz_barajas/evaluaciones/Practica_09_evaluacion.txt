@@ -1,0 +1,6 @@
+Alumno: Ortiz Barajas
+Calificación: 6
+Comentarios:
+La clasificación falla en la mayoría de los casos. El error puede estar
+en las líneas 208,209 y 210. El factor que ahí se calcula se debe calcular
+para cada imagen, pero NO es la suma de todas las imágenes. 
