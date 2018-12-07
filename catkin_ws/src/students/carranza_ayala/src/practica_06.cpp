@@ -183,14 +183,9 @@ int main(int argc, char** argv)
     ros::Publisher  pub_cmd_vel  = n.advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     ros::Publisher  pub_markers  = n.advertise<visualization_msgs::Marker>("/hri/visualization_marker", 1);
 
-    /*
-     * T O D O :
-     * These are the default parameters. After tunning the potential fields, change
-     * this parameters to the ones you found.
-     */
     n.param<float>("k_rej", Krej, 2.5);
     n.param<float>("k_att", Katt, 1.0);
-    n.param<float>("d0", d0, 0.8);
+    n.param<float>("d0", d0, 1.5);
 
     tf::TransformListener tl;
     tf::StampedTransform t;
@@ -217,58 +212,46 @@ int main(int argc, char** argv)
 	calculate_resulting_force();
 	
 	/*
-	 * T O D O :
+	 * TODO:
 	 * Write the code necessary to follow the path stored in 'global_path'.
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
+	float dist_to_goal = sqrt((goal_x - robot_x)*(goal_x - robot_x) + (goal_y - robot_y)*(goal_y - robot_y));
+	float delta   = 0.3;
+	float res_mag = sqrt(resulting_x*resulting_x + resulting_y*resulting_y);
+	resulting_x = res_mag > 0 ? resulting_x / res_mag : 0;
+	resulting_y = res_mag > 0 ? resulting_y / res_mag : 0;
+	resulting_x *= delta;
+	resulting_y *= delta;
+	float next_pos_x = robot_x + resulting_x;
+	float next_pos_y = robot_y + resulting_y;
 
-    float next_x = robot_x + 0.03 * resulting_x;
-    float next_y = robot_y + 0.03 * resulting_y;
+	float alpha = 0.3548;
+	float beta  = 0.1;
+	float v_max = 0.5;
+	float w_max = 0.5;
+	float error_x = next_pos_x - robot_x;
+	float error_y = next_pos_y - robot_y;
+	float error_a = atan2(error_y, error_x) - robot_a;
+	if(error_a >  M_PI) error_a -= 2*M_PI;
+	if(error_a < -M_PI) error_a += 2*M_PI;
 
-    //Differential control
-    float x_vel, w;
-    float v_max = 0.5;  //Max value for linear velocity
-    float w_max = 0.5;  //Max value for angular velocity
-    float alpha = 0.5;  //Alpha parameter for linear velocity
-    float beta = 0.7;   //Beta parameter for angular velocity
+	if(dist_to_goal > 0.1)
+	{
+	    msg_cmd_vel.linear.x  = v_max * exp(-error_a*error_a/alpha);
+	    msg_cmd_vel.linear.y  = 0;
+	    msg_cmd_vel.angular.z = w_max * (2 / (1 + exp(-error_a/beta)) - 1);
+	}
+	else
+	{
+	    msg_cmd_vel.linear.x  = 0;
+	    msg_cmd_vel.linear.y  = 0;
+	    msg_cmd_vel.angular.z = 0;
+	}
+	
 
-    //Calculate position and angle errors between robots position and next position
-    float error_x = next_x - robot_x;
-    float error_y = next_y - robot_y;
-    //Calculate goal angle
-    float goal_a = atan2(error_y, error_x);
-    float error_a = goal_a - robot_a;
-    
-    //Adjust angle error to values between -PI to +PI
-    if (error_a < -M_PI)
-        error_a += 2 * M_PI;
-    else if (error_a > M_PI)
-        error_a -= 2 * M_PI;
-
-    //Calculate error with respect to goal position
-    float global_error_x = goal_x - robot_x;
-    float global_error_y = goal_y - robot_y;
-
-    //If we are further than 0.1m to the goal, calculate velocity
-    if ((pow(global_error_x, 2) + pow(global_error_y, 2)) >= 0.1)
-    {
-        x_vel = v_max * exp(-error_a * error_a / alpha);    //Linear velocity
-        w = w_max * (2 / (1 + exp(-error_a / beta)) - 1);   //Angular velocity
-    }
-    //Else we have reached the goal point
-    else
-    {
-        x_vel = 0;
-        w = 0;
-    }
-    
-    //Update the velocities
-    msg_cmd_vel.linear.x = x_vel;
-    msg_cmd_vel.linear.y = 0;
-    msg_cmd_vel.angular.z = w;
-
-    pub_cmd_vel.publish(msg_cmd_vel);
+	pub_cmd_vel.publish(msg_cmd_vel);
 	pub_markers.publish(get_attraction_arrow());
 	pub_markers.publish(get_rejection_arrow());
 	pub_markers.publish(get_resulting_arrow());

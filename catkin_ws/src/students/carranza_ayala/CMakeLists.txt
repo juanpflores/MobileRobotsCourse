@@ -17,8 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
-  random_numbers
   occupancy_grid_utils
+  random_numbers
 )
 
 ## System dependencies are found with CMake's conventions
