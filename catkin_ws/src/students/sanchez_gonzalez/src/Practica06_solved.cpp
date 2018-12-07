@@ -174,7 +174,7 @@ visualization_msgs::Marker get_resulting_arrow()
 int main(int argc, char** argv)
 {
     std::cout << "PRÁCTICA 06 - CAMPOS POTENCIALES - " << NOMBRE << std::endl;
-    ros::init(argc, argv, "practica_06");
+    ros::init(argc, argv, "practica_06_solved");
     ros::NodeHandle n("~");
     ros::Rate loop(20);
 

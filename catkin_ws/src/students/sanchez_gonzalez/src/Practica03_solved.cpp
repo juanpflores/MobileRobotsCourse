@@ -136,7 +136,7 @@ bool callback_a_star(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Respons
 int main(int argc, char** argv)
 {
     std::cout << "PRÁCTICA 03 - PLANEACIÓN DE RUTAS MEDIANTE ALGORITMOS DE BUSQUEDA - " << NOMBRE << std::endl;
-    ros::init(argc, argv, "practica_03");
+    ros::init(argc, argv, "practica_03_solved");
     ros::NodeHandle n("~");
     ros::ServiceServer srvBFS      = n.advertiseService("/navigation/path_planning/breadth_first_search", callback_bfs);
     ros::ServiceServer srvDFS      = n.advertiseService("/navigation/path_planning/depth_first_search",  callback_dfs);

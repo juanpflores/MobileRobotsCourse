@@ -1,7 +1,7 @@
 #include "PathPlanner.h"
 
 bool PathPlanner::BreadthFirstSearch(float start_x, float start_y, float goal_x, float goal_y,
-			       nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
+                   nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
 {
     /*
      * Calculate the corresponding cell indices in the occupancy grid for the start and goal position.
@@ -43,8 +43,8 @@ bool PathPlanner::BreadthFirstSearch(float start_x, float start_y, float goal_x,
      */
     for(size_t i=0;  i < map.data.size(); i++)
     {
-	nodes[i].index          = i;
-	nodes[i].distance       = INT_MAX;
+    nodes[i].index          = i;
+    nodes[i].distance       = INT_MAX;
         nodes[i].in_open_list   = false;
         nodes[i].in_closed_list = false;
         nodes[i].parent         = NULL;
@@ -66,46 +66,46 @@ bool PathPlanner::BreadthFirstSearch(float start_x, float start_y, float goal_x,
      */
     while(!open_list.empty() && current_node->index != idx_goal)
     {
-	//Choose the current node with the criterion of the LEAST RECENT and add it to the closed list.
-	current_node = open_list.front();  
-	open_list.pop();                   
-	current_node->in_closed_list = true;
-	
-	//Get the list of neighbors of the current node (using 4 connectivity).
-	node_neighbors[0] = current_node->index + map.info.width;
-	node_neighbors[1] = current_node->index + 1;
-	node_neighbors[2] = current_node->index - map.info.width;
-	node_neighbors[3] = current_node->index - 1;
-	
-	for(size_t i=0; i < node_neighbors.size(); i++)
-	{
-	    //If it is an occupied cell or it is in the closed list, ignore it.
-	    if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
-		continue;
-	    
-	    //If the distance from the current node is less than the previously found distance, then change it,
-	    //and set the current node as parent of this neighbor.
-	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1;
-	    if(dist < neighbor->distance)
-	    {
-		neighbor->distance = dist;
-		neighbor->parent   = current_node;
-	    }
-	    //If it is not in the open list, add it.
-	    if(!neighbor->in_open_list)
-	    {
-		neighbor->in_open_list = true;
-		open_list.push(neighbor);
-	    }
-	    
-	    //Increment just to have a measure of the running time.
-	    runtime_steps++; 
-	}
+    //Choose the current node with the criterion of the LEAST RECENT and add it to the closed list.
+    current_node = open_list.front();  
+    open_list.pop();                   
+    current_node->in_closed_list = true;
+    
+    //Get the list of neighbors of the current node (using 4 connectivity).
+    node_neighbors[0] = current_node->index + map.info.width;
+    node_neighbors[1] = current_node->index + 1;
+    node_neighbors[2] = current_node->index - map.info.width;
+    node_neighbors[3] = current_node->index - 1;
+    
+    for(size_t i=0; i < node_neighbors.size(); i++)
+    {
+        //If it is an occupied cell or it is in the closed list, ignore it.
+        if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
+        continue;
+        
+        //If the distance from the current node is less than the previously found distance, then change it,
+        //and set the current node as parent of this neighbor.
+        Node* neighbor = &nodes[node_neighbors[i]];
+        int dist = current_node->distance + 1;
+        if(dist < neighbor->distance)
+        {
+        neighbor->distance = dist;
+        neighbor->parent   = current_node;
+        }
+        //If it is not in the open list, add it.
+        if(!neighbor->in_open_list)
+        {
+        neighbor->in_open_list = true;
+        open_list.push(neighbor);
+        }
+        
+        //Increment just to have a measure of the running time.
+        runtime_steps++; 
+    }
     }
     //Check if the path was found
     if(current_node->index != idx_goal)
-	return false;
+    return false;
     /*
      * THIS IS WHERE THE ALGORITHM ENDS
     */
@@ -120,16 +120,16 @@ bool PathPlanner::BreadthFirstSearch(float start_x, float start_y, float goal_x,
     p.header.frame_id = "map";
     while(current_node->parent != NULL)
     {
-	p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;	
-	p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
-	result.poses.insert(result.poses.begin(), p);
-	current_node = current_node->parent;
+    p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;    
+    p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
+    result.poses.insert(result.poses.begin(), p);
+    current_node = current_node->parent;
     }
     return true;
 }
 
 bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, float goal_y,
-			     nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
+                 nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
 {
     /*
      * Calculate the corresponding cell indices in the occupancy grid for the start and goal position.
@@ -171,8 +171,8 @@ bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, f
      */
     for(size_t i=0;  i < map.data.size(); i++)
     {
-	nodes[i].index          = i;
-	nodes[i].distance       = INT_MAX;
+    nodes[i].index          = i;
+    nodes[i].distance       = INT_MAX;
         nodes[i].in_open_list   = false;
         nodes[i].in_closed_list = false;
         nodes[i].parent         = NULL;
@@ -193,46 +193,46 @@ bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, f
      */
     while(!open_list.empty() && current_node->index != idx_goal)
     {
-	//Choose the current node with the criterion of the MOST RECENT and add it to the closed list.
-	current_node = open_list.top();  
-	open_list.pop();                   
-	current_node->in_closed_list = true;
-	
-	//Get the list of neighbors of the current node (using 4 connectivity).
-	node_neighbors[0] = current_node->index + map.info.width;
-	node_neighbors[1] = current_node->index + 1;
-	node_neighbors[2] = current_node->index - map.info.width;
-	node_neighbors[3] = current_node->index - 1;
-	
-	for(size_t i=0; i < node_neighbors.size(); i++)
-	{
-	    //If it is an occupied cell or it is in the closed list, ignore it.
-	    if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
-		continue;
-	    
-	    //If the distance from the current node is less than the previously found distance, then change it,
-	    //and set the current node as parent of this neighbor.
-	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1;
-	    if(dist < neighbor->distance)
-	    {
-		neighbor->distance = dist;
-		neighbor->parent   = current_node;
-	    }
-	    //If it is not in the open list, add it.
-	    if(!neighbor->in_open_list)
-	    {
-		neighbor->in_open_list = true;
-		open_list.push(neighbor);
-	    }
-	    
-	    //Increment just to have a measure of the running time.
-	    runtime_steps++; 
-	}
+    //Choose the current node with the criterion of the MOST RECENT and add it to the closed list.
+    current_node = open_list.top();  
+    open_list.pop();                   
+    current_node->in_closed_list = true;
+    
+    //Get the list of neighbors of the current node (using 4 connectivity).
+    node_neighbors[0] = current_node->index + map.info.width;
+    node_neighbors[1] = current_node->index + 1;
+    node_neighbors[2] = current_node->index - map.info.width;
+    node_neighbors[3] = current_node->index - 1;
+    
+    for(size_t i=0; i < node_neighbors.size(); i++)
+    {
+        //If it is an occupied cell or it is in the closed list, ignore it.
+        if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
+        continue;
+        
+        //If the distance from the current node is less than the previously found distance, then change it,
+        //and set the current node as parent of this neighbor.
+        Node* neighbor = &nodes[node_neighbors[i]];
+        int dist = current_node->distance + 1;
+        if(dist < neighbor->distance)
+        {
+        neighbor->distance = dist;
+        neighbor->parent   = current_node;
+        }
+        //If it is not in the open list, add it.
+        if(!neighbor->in_open_list)
+        {
+        neighbor->in_open_list = true;
+        open_list.push(neighbor);
+        }
+        
+        //Increment just to have a measure of the running time.
+        runtime_steps++; 
+    }
     }
     //Check if the path was found
     if(current_node->index != idx_goal)
-	return false;
+    return false;
     /*
      * THIS IS WHERE THE ALGORITHM ENDS
     */
@@ -247,17 +247,17 @@ bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, f
     p.header.frame_id = "map";
     while(current_node->parent != NULL)
     {
-	p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;	
-	p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
-	result.poses.insert(result.poses.begin(), p);
-	current_node = current_node->parent;
+    p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;    
+    p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
+    result.poses.insert(result.poses.begin(), p);
+    current_node = current_node->parent;
     }
     return true;
     
 }
 
 bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goal_y,
-		     nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
+             nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
 {
     /*
      * Calculate the corresponding cell indices in the occupancy grid for the start and goal position.
@@ -300,8 +300,8 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
      */
     for(size_t i=0;  i < map.data.size(); i++)
     {
-	nodes[i].index          = i;
-	nodes[i].distance       = INT_MAX;
+    nodes[i].index          = i;
+    nodes[i].distance       = INT_MAX;
         nodes[i].in_open_list   = false;
         nodes[i].in_closed_list = false;
         nodes[i].parent         = NULL;
@@ -322,48 +322,48 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
      */
     while(!open_list.empty() && current_node->index != idx_goal)
     {
-	//Choose the current node with the criterion of the MINIMUM DISTANCE and add it to the closed list.
-	current_node = open_list.top();  
-	open_list.pop();                   
-	current_node->in_closed_list = true;
-	
-	//Get the list of neighbors of the current node (using 4 connectivity).
-	node_neighbors[0] = current_node->index + map.info.width;
-	node_neighbors[1] = current_node->index + 1;
-	node_neighbors[2] = current_node->index - map.info.width;
-	node_neighbors[3] = current_node->index - 1;
-	
-	for(size_t i=0; i < node_neighbors.size(); i++)
-	{
-	    //If it is an occupied cell or it is in the closed list, ignore it.
-	    if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
-		continue;
-	    
-	    //If the distance from the current node is less than the previously found distance, then change it,
-	    //and set the current node as parent of this neighbor.
-	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
-	    if(dist < neighbor->distance)
-	    {
-		neighbor->distance = dist;
-		neighbor->parent   = current_node;
-	    }
-	    //If it is not in the open list, add it.
-	    if(!neighbor->in_open_list)
-	    {
-		neighbor->in_open_list = true;
-		//The priority queue automatically inserts the node in the correct position using
-		//the distance as a sorting criterion.
-		open_list.push(neighbor);
-	    }
-	    
-	    //Increment just to have a measure of the running time.
-	    runtime_steps++; 
-	}
+    //Choose the current node with the criterion of the MINIMUM DISTANCE and add it to the closed list.
+    current_node = open_list.top();  
+    open_list.pop();                   
+    current_node->in_closed_list = true;
+    
+    //Get the list of neighbors of the current node (using 4 connectivity).
+    node_neighbors[0] = current_node->index + map.info.width;
+    node_neighbors[1] = current_node->index + 1;
+    node_neighbors[2] = current_node->index - map.info.width;
+    node_neighbors[3] = current_node->index - 1;
+    
+    for(size_t i=0; i < node_neighbors.size(); i++)
+    {
+        //If it is an occupied cell or it is in the closed list, ignore it.
+        if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
+        continue;
+        
+        //If the distance from the current node is less than the previously found distance, then change it,
+        //and set the current node as parent of this neighbor.
+        Node* neighbor = &nodes[node_neighbors[i]];
+        int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
+        if(dist < neighbor->distance)
+        {
+        neighbor->distance = dist;
+        neighbor->parent   = current_node;
+        }
+        //If it is not in the open list, add it.
+        if(!neighbor->in_open_list)
+        {
+        neighbor->in_open_list = true;
+        //The priority queue automatically inserts the node in the correct position using
+        //the distance as a sorting criterion.
+        open_list.push(neighbor);
+        }
+        
+        //Increment just to have a measure of the running time.
+        runtime_steps++; 
+    }
     }
     //Check if the path was found
     if(current_node->index != idx_goal)
-	return false;
+    return false;
     /*
      * THIS IS WHERE THE ALGORITHM ENDS
     */
@@ -378,16 +378,16 @@ bool PathPlanner::Dijkstra(float start_x, float start_y, float goal_x, float goa
     p.header.frame_id = "map";
     while(current_node->parent != NULL)
     {
-	p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;	
-	p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
-	result.poses.insert(result.poses.begin(), p);
-	current_node = current_node->parent;
+    p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;    
+    p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
+    result.poses.insert(result.poses.begin(), p);
+    current_node = current_node->parent;
     }
     return true;
 }
 
 bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y,
-			nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
+            nav_msgs::OccupancyGrid& map, nav_msgs::Path& result)
 {
     /*
      * Calculate the corresponding cell indices in the occupancy grid for the start and goal position.
@@ -431,9 +431,9 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
      */
     for(size_t i=0;  i < map.data.size(); i++)
     {
-	nodes[i].index          = i;
-	nodes[i].distance       = INT_MAX;
-	nodes[i].f_value        = INT_MAX;
+    nodes[i].index          = i;
+    nodes[i].distance       = INT_MAX;
+    nodes[i].f_value        = INT_MAX;
         nodes[i].in_open_list   = false;
         nodes[i].in_closed_list = false;
         nodes[i].parent         = NULL;
@@ -454,53 +454,53 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
      */
     while(!open_list.empty() && current_node->index != idx_goal)
     {
-	//Choose the current node with the criterion of the MINIMUM F-VALUE and add it to the closed list.
-	current_node = open_list.top();  
-	open_list.pop();                   
-	current_node->in_closed_list = true;
-	
-	//Get the list of neighbors of the current node (using 4 connectivity).
-	node_neighbors[0] = current_node->index + map.info.width;
-	node_neighbors[1] = current_node->index + 1;
-	node_neighbors[2] = current_node->index - map.info.width;
-	node_neighbors[3] = current_node->index - 1;
-	
-	for(size_t i=0; i < node_neighbors.size(); i++)
-	{
-	    //If it is an occupied cell or it is in the closed list, ignore it.
-	    if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
-		continue;
-	    
-	    //If the distance from the current node is less than the previously found distance, then change it,
-	    //and set the current node as parent of this neighbor.
-	    Node* neighbor = &nodes[node_neighbors[i]];
-	    int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
-	    if(dist < neighbor->distance)
-	    {
-		//In addition to the distance, for A* we must calculate the f-value
-		//The heuristics we use is the manhattan distance from the neighbor to the goal.
-		int h = abs(neighbor->index%map.info.width - idx_goal%map.info.width);
-		h += abs(neighbor->index/map.info.width - idx_goal/map.info.width);
-		neighbor->distance = dist;
-		neighbor->f_value  = dist + h;
-		neighbor->parent   = current_node;
-	    }
-	    //If it is not in the open list, add it.
-	    if(!neighbor->in_open_list)
-	    {
-		neighbor->in_open_list = true;
-		//The priority queue automatically inserts the node in the correct position using
-		//the f-value as a sorting criterion.
-		open_list.push(neighbor);
-	    }
-	    
-	    //Increment just to have a measure of the running time.
-	    runtime_steps++; 
-	}
+    //Choose the current node with the criterion of the MINIMUM F-VALUE and add it to the closed list.
+    current_node = open_list.top();  
+    open_list.pop();                   
+    current_node->in_closed_list = true;
+    
+    //Get the list of neighbors of the current node (using 4 connectivity).
+    node_neighbors[0] = current_node->index + map.info.width;
+    node_neighbors[1] = current_node->index + 1;
+    node_neighbors[2] = current_node->index - map.info.width;
+    node_neighbors[3] = current_node->index - 1;
+    
+    for(size_t i=0; i < node_neighbors.size(); i++)
+    {
+        //If it is an occupied cell or it is in the closed list, ignore it.
+        if(map.data[node_neighbors[i]] > 40 || map.data[node_neighbors[i]] < 0 || nodes[node_neighbors[i]].in_closed_list)
+        continue;
+        
+        //If the distance from the current node is less than the previously found distance, then change it,
+        //and set the current node as parent of this neighbor.
+        Node* neighbor = &nodes[node_neighbors[i]];
+        int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
+        if(dist < neighbor->distance)
+        {
+        //In addition to the distance, for A* we must calculate the f-value
+        //The heuristics we use is the manhattan distance from the neighbor to the goal.
+        int h = abs(neighbor->index%map.info.width - idx_goal%map.info.width);
+        h += abs(neighbor->index/map.info.width - idx_goal/map.info.width);
+        neighbor->distance = dist;
+        neighbor->f_value  = dist + h;
+        neighbor->parent   = current_node;
+        }
+        //If it is not in the open list, add it.
+        if(!neighbor->in_open_list)
+        {
+        neighbor->in_open_list = true;
+        //The priority queue automatically inserts the node in the correct position using
+        //the f-value as a sorting criterion.
+        open_list.push(neighbor);
+        }
+        
+        //Increment just to have a measure of the running time.
+        runtime_steps++; 
+    }
     }
     //Check if the path was found
     if(current_node->index != idx_goal)
-	return false;
+    return false;
     /*
      * THIS IS WHERE THE ALGORITHM ENDS
     */
@@ -515,10 +515,10 @@ bool PathPlanner::AStar(float start_x, float start_y, float goal_x, float goal_y
     p.header.frame_id = "map";
     while(current_node->parent != NULL)
     {
-	p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;	
-	p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
-	result.poses.insert(result.poses.begin(), p);
-	current_node = current_node->parent;
+    p.pose.position.x = current_node->index % map.info.width * map.info.resolution + map.info.origin.position.x;    
+    p.pose.position.y = current_node->index / map.info.width * map.info.resolution + map.info.origin.position.y;
+    result.poses.insert(result.poses.begin(), p);
+    current_node = current_node->parent;
     }
     return true;
 }

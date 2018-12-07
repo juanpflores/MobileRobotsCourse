@@ -98,7 +98,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
 int main(int argc, char** argv)
 {
     std::cout << "PRÁCTICA 05 - SEGUIMIENTO DE RUTAS - " << NOMBRE << std::endl;
-    ros::init(argc, argv, "practica_05");
+    ros::init(argc, argv, "practica_05_solved");
     ros::NodeHandle n("~");
     ros::Rate loop(20);
 

@@ -164,7 +164,7 @@ bool callback_a_star(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Respons
 int main(int argc, char** argv)
 {
     std::cout << "PRÁCTICA 04 - SUAVIZADO DE RUTAS MEDIANTE DESCENSO DEL GRADIENTE - " << NOMBRE << std::endl;
-    ros::init(argc, argv, "practica_04");
+    ros::init(argc, argv, "practica_04_solved");
     ros::NodeHandle n("~");
     nPtr = &n;
 
