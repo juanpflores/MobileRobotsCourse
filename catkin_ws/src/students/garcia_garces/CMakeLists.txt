@@ -17,11 +17,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   visualization_msgs
+  occupancy_grid_utils
   random_numbers
-  tf2
-  image_geometry
-  tf2_ros
-  tf2_geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -152,6 +149,12 @@ add_executable(practica_05_node src/Practica05.cpp src/PathPlanner.cpp src/PathS
 add_executable(practica_06_node src/Practica06.cpp)
 add_executable(practica_09_node src/Practica09.cpp)
 
+add_executable(practica_03_solved src/Practica03_solved.cpp src/PathPlannerSolved.cpp)
+add_executable(practica_04_solved src/Practica04_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+add_executable(practica_05_solved src/Practica05_solved.cpp src/PathPlannerSolved.cpp src/PathSmootherSolved.cpp)
+add_executable(practica_06_solved src/Practica06_solved.cpp)
+add_executable(practica_08_solved src/Practica08_solved.cpp)
+
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -168,6 +171,12 @@ add_dependencies(practica_04_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 add_dependencies(practica_05_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_06_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_09_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_dependencies(practica_03_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_04_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_05_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_06_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(practica_08_solved ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
@@ -190,6 +199,22 @@ target_link_libraries(practica_06_node
   ${catkin_LIBRARIES}
   )
 target_link_libraries(practica_09_node
+  ${catkin_LIBRARIES}
+  )
+
+target_link_libraries(practica_03_solved
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(practica_04_solved
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(practica_05_solved
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(practica_06_solved
+  ${catkin_LIBRARIES}
+  )
+target_link_libraries(practica_08_solved
   ${catkin_LIBRARIES}
   )
 
