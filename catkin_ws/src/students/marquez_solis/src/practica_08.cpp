@@ -57,9 +57,9 @@ sensor_msgs::LaserScan Robot::SimulateSense(nav_msgs::OccupancyGrid& map)
 {
     sensor_msgs::LaserScan scanInfo;
     scanInfo.header.frame_id = "laser_link";
-    scanInfo.angle_min = -157;
-    scanInfo.angle_max = 1.57;
-    scanInfo.angle_increment = 0.06;
+    scanInfo.angle_min = -1.570796;
+    scanInfo.angle_max = 1.570796;
+    scanInfo.angle_increment = 0.0613;
     scanInfo.scan_time = 0.1;
     scanInfo.range_min = 0.01;
     scanInfo.range_max = 4.0;
@@ -105,7 +105,7 @@ int weighted_sample_index(std::vector<float>& weights, float max_weight)
 	beta -= weights[i];
     }
     std::cout << "Error!!!!!" << std::endl;
-    return -1; 
+    return 0; 
 }
 
 std::vector<Robot> resample(std::vector<Robot>& robots, std::vector<float>& weights)
