@@ -1,0 +1,6 @@
+Alumno: Rodríguez Miranda
+Calificación: 8.0
+Comentarios: El programa no funciona correctamente.
+Las probabilidades no se actualizan correctamente. De hecho, ya sea que se ejecute
+un movimiento o una observación, los valores calculados son todos iguales
+y no suman 1.0.
