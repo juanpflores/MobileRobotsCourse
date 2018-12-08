@@ -53,7 +53,7 @@ void callback_go_to_xya(const std_msgs::Float32MultiArray::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
-    float goal_x, goal_y, error_a, error_x, error_y, global_error_x, global_error_y, goal_a, v_x, v_y, w, v_max = 1.0, w_max = 1.0, dist;
+    float goal_x, goal_y, error_a, error_x, error_y, global_error_x, global_error_y, goal_a, v_x, v_y, w, v_max = 0.5, w_max = 0.5, dist;
     std::cout << "PRÁCTICA 05 - SEGUIMIENTO DE RUTAS - " << NOMBRE << std::endl;
     ros::init(argc, argv, "practica_05");
     ros::NodeHandle n("~");
