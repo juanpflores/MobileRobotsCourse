@@ -222,40 +222,39 @@ int main(int argc, char** argv)
 	 * Use the position control for a DIFFERENTIAL base.
 	 * Store the linear and angular speed in msg_cmd_vel.
 	 */
-	
+float dist_to_goal = sqrt((goal_x - robot_x)*(goal_x - robot_x) + (goal_y - robot_y)*(goal_y - robot_y));
+	float delta   = 0.3;
+	float res_mag = sqrt(resulting_x*resulting_x + resulting_y*resulting_y);
+	resulting_x = res_mag > 0 ? resulting_x / res_mag : 0;
+	resulting_y = res_mag > 0 ? resulting_y / res_mag : 0;
+	resulting_x *= delta;
+	resulting_y *= delta;
+	float next_pos_x = robot_x + resulting_x;
+	float next_pos_y = robot_y + resulting_y;
 
-	float next_x=robot_x+0.06*resulting_x;
-	float next_y=robot_y+0.06*resulting_y;
-	
-	//Se implementa el control diferencial
-	float vel_x, w, v_max = 1.0, w_max = 1.0;
-	
-	//Se calcula el error en x,y en el angulo deseado
-	float error_x = next_x - robot_x;
-	float error_y = next_y - robot_y;
-	float goal_a = atan2(error_y,error_x);
-	float error_a = goal_a - robot_a;
+	float alpha = 0.3548;
+	float beta  = 0.1;
+	float v_max = 0.5;
+	float w_max = 0.5;
+	float error_x = next_pos_x - robot_x;
+	float error_y = next_pos_y - robot_y;
+	float error_a = atan2(error_y, error_x) - robot_a;
+	if(error_a >  M_PI) error_a -= 2*M_PI;
+	if(error_a < -M_PI) error_a += 2*M_PI;
 
- 	if(error_a < - M_PI)
- 		error_a+=2*M_PI;
- 	else if(error_a > M_PI)
-      		error_a-=2*M_PI;
-    	
-	float global_error_x = goal_x - robot_x; 
-	float global_error_y = goal_y - robot_y;
-	
-	if((pow(global_error_x,2) +pow(global_error_y,2))>=0.1){
-        	vel_x = v_max * exp(-error_a*error_a/0.5);
-        	w = w_max *  (2/(1 + exp(-error_a/0.5))-1);
-    	} 
-	else { 
-	        vel_x = 0;
-	        w = 0;    
+	if(dist_to_goal > 0.1)
+	{
+	    msg_cmd_vel.linear.x  = v_max * exp(-error_a*error_a/alpha);
+	    msg_cmd_vel.linear.y  = 0;
+	    msg_cmd_vel.angular.z = w_max * (2 / (1 + exp(-error_a/beta)) - 1);
+	}
+	else
+	{
+	    msg_cmd_vel.linear.x  = 0;
+	    msg_cmd_vel.linear.y  = 0;
+	    msg_cmd_vel.angular.z = 0;
 	}
 	
-	msg_cmd_vel.linear.x = vel_x;
-    	msg_cmd_vel.linear.y = 0;
-	msg_cmd_vel.angular.z = w;
 
 	pub_cmd_vel.publish(msg_cmd_vel);
 	pub_markers.publish(get_attraction_arrow());
