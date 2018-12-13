@@ -195,7 +195,7 @@ bool PathPlanner::DepthFirstSearch(float start_x, float start_y, float goal_x, f
 			//If the distance from the current node is less than the previously found distance, then change it,
 			//and set the current node as parent of this neighbor.
 			Node* neighbor = &nodes[node_neighbors[i]];
-			int dist = current_node->distance + 1 + map.data[node_neighbors[i]];
+			int dist = current_node->distance + 1;
 			if(dist < neighbor->distance)
 			{
 				neighbor->distance = dist;

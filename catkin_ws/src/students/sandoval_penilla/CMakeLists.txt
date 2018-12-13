@@ -140,6 +140,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
+add_executable(practica_02 src/Practica02.cpp)
 add_executable(practica_04 src/Practica04.cpp src/PathPlanner.cpp src/PathPlanner.h src/PathSmoother.cpp src/PathSmoother.h)
 add_executable(practica_05 src/Practica05.cpp)
 add_executable(practica_06 src/Practica06.cpp)
@@ -153,6 +154,7 @@ add_executable(practica_09 src/Practica09.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
+add_dependencies(practica_02 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_04 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_05 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(practica_06 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -160,6 +162,9 @@ add_dependencies(practica_08 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORT
 add_dependencies(practica_09 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
+ target_link_libraries(practica_02
+   ${catkin_LIBRARIES}
+ )
  target_link_libraries(practica_04
    ${catkin_LIBRARIES}
  )
