@@ -18,3 +18,6 @@ To use this software you need:
 
 * roslaunch surge_et_ambula getting_started.launch
 
+## Entregable Tarea
+
+* roslaunch laser_distance laser.launch
